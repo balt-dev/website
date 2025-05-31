@@ -1,0 +1,254 @@
+@page {
+    size: portrait;
+}
+
+body > * {
+    display: none;
+}
+
+.message {
+    display: inline !important;
+}
+
+html {
+  font-size: 12px;
+}
+
+@media screen and (min-width: 32rem) and (max-width: 48rem) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media screen and (min-width: 48rem) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  line-height: 1.85;
+  background-color: #10141e;
+}
+
+p,
+.air-p {
+  font-size: 1rem;
+  margin-bottom: 1.3rem;
+}
+
+h1,
+.air-h1,
+h2,
+.air-h2,
+h3,
+.air-h3,
+h4,
+.air-h4 {
+  margin: 1.414rem 0 .5rem;
+  font-weight: inherit;
+  line-height: 1.42;
+}
+
+h1,
+.air-h1 {
+  margin-top: 0;
+  font-size: 3.998rem;
+}
+
+h2,
+.air-h2 {
+  font-size: 2.827rem;
+}
+
+h3,
+.air-h3 {
+  font-size: 1.999rem;
+}
+
+h4,
+.air-h4 {
+  font-size: 1.414rem;
+}
+
+h5,
+.air-h5 {
+  font-size: 1.121rem;
+}
+
+h6,
+.air-h6 {
+  font-size: .88rem;
+}
+
+small,
+.air-small {
+  font-size: .707em;
+}
+
+/* https://github.com/mrmrs/fluidity */
+
+img,
+canvas,
+iframe,
+video,
+svg,
+select,
+textarea {
+  max-width: 100%;
+}
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,300);
+
+body {
+    color: #ccc;
+    font-family: 'Open Sans', Helvetica, sans-serif;
+    font-weight: 300;
+    margin: 6rem auto 1rem;
+    max-width: 60rem;
+    text-align: left;
+}
+
+div#toc {
+    position: fixed;
+    left: -34rem;
+    top: 0;
+    width: 36rem;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    white-space: nowrap;
+    background-color: #8884;
+    transition: left 0.2s ease-out;
+    padding: 1rem;
+    backdrop-filter: blur(0.25rem);
+}
+
+div#toc * {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+
+div#toc h3.folded-label {
+    transform: rotate(90deg);
+    position: fixed;
+    left: calc(100% - 11rem);
+    top: calc(50% - 5rem);
+    transition: opacity 0.2s ease-out;
+    opacity: 1;
+}
+
+div#toc:hover {
+    left: 0rem;
+}
+
+div#toc:hover h3.folded-label {
+    opacity: 0;
+}
+
+div#toc:hover * {
+    opacity: 1;
+}
+
+div#toc ul {
+    list-style: "- ";
+}
+
+a,
+a:visited {
+  color: #3498db;
+}
+
+a:hover,
+a:focus,
+a:active {
+  color: #2980b9;
+}
+
+pre {
+  background-color: #0e0e0e;
+  padding: 1rem;
+}
+
+blockquote {
+  margin: 0;
+  border-left: 5px solid #848484;
+  font-style: italic;
+  padding: 1.33em;
+}
+
+ul,
+ol {
+    max-width: 50rem;
+    margin: 0 auto;
+}
+
+p {
+  color: #999;
+}
+
+h2 {
+    padding-left: 1rem;
+}
+
+h3 {
+    padding-left: 2rem;
+}
+
+p {
+    padding-left: 3rem;
+}
+
+span.redacted {
+    color: transparent;
+    background-color: #040608;
+    user-select: none;
+    cursor: not-allowed;
+    border-radius: 0.3rem;
+    border: 0 solid;
+}
+
+div#main {
+    max-height: 90vh;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    position: absolute;
+    top: 2.5rem;
+    z-index: -1;
+    background-color: #0004;
+    padding: 0 2rem;
+    border: 0 solid;
+    border-radius: 1rem;
+    margin: 0 auto 2.5rem auto;
+}
+
+hr {
+    margin: 2rem 0;
+}
+
+div.gallery {
+    display: flex;
+    width: auto;
+    max-width: calc(100% - 20rem);
+    height: auto;
+    gap: 1rem;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+div.gallery > img {
+    max-height: 10rem;
+    height: auto;
+    min-height: 0%;
+    border-radius: 1rem;
+    transition: border-radius 0.25s ease-in-out;
+}
+
+div.gallery > img:hover {
+    border-radius: 0;
+}
+
+img.pixelated {
+    image-rendering: pixelated;
+}

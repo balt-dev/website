@@ -1,0 +1,676 @@
+
+<html>
+<head>
+  <title>ADOFAI Map Tap</title>
+	<style>
+		body {
+			color: #b0b0b0;
+			background-color: black;
+			font-family: godoMaum;
+			font-size: 30px;
+			margin-left: 35px;
+		}
+
+		h1 {
+			color: #ffffff;
+			margin-left: -10px;
+		}
+
+		input[type=number] {
+			background-color: #00000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		option {
+			background-color: #000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		select {
+			background-color: #000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		div[id=maptap] {
+			font-size: 40px;
+			color:#e0e0e0;
+			font-weight: bold;
+		}
+</style>
+</head>
+<body>
+		<h1>THIS SITE IS OUTDATED!</h1>
+		<p>This was made before angle paths, meaning it can only have accuracy up to 15 degrees.<br>
+		It's also pretty buggy. Use with a grain of salt.</p>
+		<hr>
+    <h1>ADOFAI Map Tap Tool</h1>
+    <div>
+			To finish the map, wait 2 beats before hitting.<br>
+			For accuracy's sake, it's highly recommended play the song at half speed and BPM, or less.
+    </div>
+		<br>
+		<label for="acc">Angle Snapping Accuracy:</label>
+		<select name="acc" id="accuracy">
+			<option value=90>90 degrees</option>
+			<option value=60>60 degrees</option>
+			<option value=45 selected="selected">45 degrees</option>
+			<option value=30>30 degrees</option>
+			<option value=15>15 degrees</option>
+		</select>
+    <div> Song's BPM: <input type="number" id="BPM" placeholder="BPM"></input> </div>
+		<br>
+    <div id="lasthit">
+      Last Tile: N/A
+    </div>
+		<div id="absangle">
+      Absolute Angle: N/A
+    </div>
+    <div id="beatdelay">
+      Beat Delay: N/A
+    </div>
+    <div id="tileangle">
+      Tile Angle: N/A
+    </div>
+    <div id="maptap" tabindex="0">
+      Click on me and start tapping!
+    </div>
+
+  <script>
+
+    //-----------------------
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    var context = new AudioContext();
+    var timer, noteCount, counting, notesPlayed;
+    var delta = 0;
+    var curTime = 0.0;
+    function schedule() {
+      while(curTime < context.currentTime + 0.1) {
+				if(hasStarted) {
+        playNote(curTime);
+        updateTime();
+				} else {
+					break;
+				}
+      }
+      timer = window.setTimeout(schedule, 0.1);
+      }
+
+      function updateTime() {
+      curTime += 60.0 / (document.getElementById("BPM").value);
+      noteCount++;
+      }
+
+      function playNote(t) {
+        var note = context.createOscillator();
+				note.frequency.value = 800;
+        note.connect(context.destination);
+//        note.start(t);
+//        note.stop(t + 0.05);
+      }
+    //------------------------
+
+
+    function closest(needle, haystack) {
+      return haystack.reduce((a, b) => {
+          let aDiff = Math.abs(a - needle);
+          let bDiff = Math.abs(b - needle);
+
+          if (aDiff == bDiff) {
+              return a > b ? a : b;
+          } else {
+              return bDiff < aDiff ? b : a;
+          }
+      });
+    }
+
+    now = Date.now();
+
+    var pathData = [];
+
+    var currAngle = 0;
+
+		var snappedAngle;
+
+    var validAngles = [-180,-165,-150,-135,-120,-105,-90,-75,-60,-45,-30,-15,0,15,30,45,60,75,90,105,120,135,150,165,180];
+         
+    var values = ["L","W","H","Q","G","q","U","o","T","E","J","p","R","A","M","C","B","Y","D","V","F","Z","N","x","L"]; 
+      
+    var map = new Map(); 
+      
+    for(var i = 0; i < validAngles.length; i++){ 
+        map.set(validAngles[i], values[i]); 
+    } 
+
+		const downloadToFile = (content, filename, contentType) => {
+			const a = document.createElement('a');
+			const file = new Blob([content], {type: contentType});
+			
+			a.href= URL.createObjectURL(file);
+			a.download = filename;
+			a.click();
+
+			URL.revokeObjectURL(a.href);
+		};
+
+		function parseTileAngle(d) {
+			snappedAngle = closest(((d + 180) % 360) - 180,validAngles);
+			var oldCurrAngle = currAngle;
+			currAngle = ((currAngle + snappedAngle) % 360);
+			yesAngle = ((currAngle + 180) % 360)
+			if (yesAngle > 180) {
+				yesAngle -= 360;
+			} 
+			yesAngle  = Math.round(yesAngle / document.getElementById("accuracy").value) * document.getElementById("accuracy").value;
+			console.log(yesAngle);
+			newTile = map.get(yesAngle, validAngles);
+			return newTile;
+		} 
+
+		function saveFile(path, bpm) {
+			var savedText = "{\r\n\t\"pathData\": \""
+			+ path
+			+ "\", \r\n\t\"settings\":\r\n\t{\r\n\t\t\"version\": 3, \r\n\t\t\"artist\": \"Artist\", \r\n\t\t\"specialArtistType\": \"None\", \r\n\t\t\"artistPermission\": \"\", \r\n\t\t\"song\": \"Song\", \r\n\t\t\"author\": \"Author\", \r\n\t\t\"separateCountdownTime\": \"Enabled\", \r\n\t\t\"previewImage\": \"\", \r\n\t\t\"previewIcon\": \"\", \r\n\t\t\"previewIconColor\": \"003f52\", \r\n\t\t\"previewSongStart\": 0, \r\n\t\t\"previewSongDuration\": 10, \r\n\t\t\"seizureWarning\": \"Disabled\", \r\n\t\t\"levelDesc\": \"Say something about your level!\", \r\n\t\t\"levelTags\": \"\", \r\n\t\t\"artistLinks\": \"\", \r\n\t\t\"difficulty\": 1, ,\r\n\t\t\"songFilename\": \"\", \r\n\t\t\"bpm\": "
+			+ bpm
+			+ ", \r\n\t\t\"volume\": 100, \r\n\t\t\"offset\": 0, \r\n\t\t\"pitch\": 100, \r\n\t\t\"hitsound\": \"Kick\", \r\n\t\t\"hitsoundVolume\": 100, \r\n\t\t\"countdownTicks\": 4,\r\n\t\t\"trackColorType\": \"Single\", \r\n\t\t\"trackColor\": \"debb7b\", \r\n\t\t\"secondaryTrackColor\": \"ffffff\", \r\n\t\t\"trackColorAnimDuration\": 2, \r\n\t\t\"trackColorPulse\": \"None\", \r\n\t\t\"trackPulseLength\": 10, \r\n\t\t\"trackStyle\": \"Standard\", \r\n\t\t\"trackAnimation\": \"None\", \r\n\t\t\"beatsAhead\": 3, \r\n\t\t\"trackDisappearAnimation\": \"None\", \r\n\t\t\"beatsBehind\": 4,\r\n\t\t\"backgroundColor\": \"000000\", \r\n\t\t\"showDefaultBGIfNoImage\": \"Enabled\", \r\n\t\t\"bgImage\": \"\", \r\n\t\t\"bgImageColor\": \"ffffff\", \r\n\t\t\"parallax\": [100, 100], \r\n\t\t\"bgDisplayMode\": \"FitToScreen\", \r\n\t\t\"lockRot\": \"Disabled\", \r\n\t\t\"loopBG\": \"Disabled\", \r\n\t\t\"unscaledSize\": 100,\r\n\t\t\"relativeTo\": \"Player\", \r\n\t\t\"position\": [0, 0], \r\n\t\t\"rotation\": 0, \r\n\t\t\"zoom\": 100,\r\n\t\t\"bgVideo\": \"\", \r\n\t\t\"loopVideo\": \"Disabled\", \r\n\t\t\"vidOffset\": 0, \r\n\t\t\"floorIconOutlines\": \"Disabled\", \r\n\t\t\"stickToFloors\": \"Disabled\", \r\n\t\t\"planetEase\": \"Linear\", \r\n\t\t\"planetEaseParts\": 1\r\n\t},\r\n\t\"actions\":\r\n\t[\r\n\t]\r\n}";
+			downloadToFile(savedText, 'tapped_map.adofai', 'text/plain');
+		}
+
+
+    hasStarted = false;
+		var sel = document.getElementById('sel');
+var button = document.getElementById('button');
+    document.querySelector('#maptap').addEventListener('keydown', function (e) {
+      if (document.getElementById("BPM").value !== "") { 
+        if (hasStarted) {
+          delay = Date.now() - now;
+          now = Date.now();
+
+        } else {
+          now = Date.now();
+					delay = 0;
+					hasStarted = true;
+					tileAngle = 0;
+					pathData = [];
+					playNote(0);
+          schedule();
+					currAngle = 0;
+        }
+        bpmInMs = 60000 / document.getElementById("BPM").value;
+        beatDelay = delay / bpmInMs;
+        tileAngle = parseInt(beatDelay * 180) - 180;
+				if (tileAngle < 187) {
+					var lastTile = parseTileAngle(tileAngle);
+					pathData.push(lastTile);
+				} else {
+					console.log(pathData.toString().replace(/,/g, ''));
+					hasStarted = false;
+					saveFile(pathData.toString().replace(/,/g, ''), document.getElementById("BPM").value)
+				}
+        document.getElementById("tileangle").innerHTML = "Tile Angle: " + tileAngle;
+				document.getElementById("absangle").innerHTML = "Absolute Angle: " + yesAngle;
+        document.getElementById("beatdelay").innerHTML = "Beat Delay: " + beatDelay;
+        document.getElementById("lasthit").innerHTML = "Last Tile: " + lastTile;
+				}
+    })
+  </script>
+</body>
+</html>
+<html>
+<head>
+  <title>ADOFAI Map Tap</title>
+	<style>
+		body {
+			color: #b0b0b0;
+			background-color: black;
+			font-family: godoMaum;
+			font-size: 30px;
+			margin-left: 35px;
+		}
+
+		h1 {
+			color: #ffffff;
+			margin-left: -10px;
+		}
+
+		input[type=number] {
+			background-color: #00000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		option {
+			background-color: #000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		select {
+			background-color: #000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		div[id=maptap] {
+			font-size: 40px;
+			color:#e0e0e0;
+			font-weight: bold;
+		}
+</style>
+</head>
+<body>
+		<h1>THIS SITE IS OUTDATED!</h1>
+		<p>This was made before angle paths, meaning it can only have accuracy up to 15 degrees.<br>
+		It's also pretty buggy. Use with a grain of salt.</p>
+		<hr>
+    <h1>ADOFAI Map Tap Tool</h1>
+    <div>
+			To finish the map, wait 2 beats before hitting.<br>
+			For accuracy's sake, it's highly recommended play the song at half speed and BPM, or less.
+    </div>
+		<br>
+		<label for="acc">Angle Snapping Accuracy:</label>
+		<select name="acc" id="accuracy">
+			<option value=90>90 degrees</option>
+			<option value=60>60 degrees</option>
+			<option value=45 selected="selected">45 degrees</option>
+			<option value=30>30 degrees</option>
+			<option value=15>15 degrees</option>
+		</select>
+    <div> Song's BPM: <input type="number" id="BPM" placeholder="BPM"></input> </div>
+		<br>
+    <div id="lasthit">
+      Last Tile: N/A
+    </div>
+		<div id="absangle">
+      Absolute Angle: N/A
+    </div>
+    <div id="beatdelay">
+      Beat Delay: N/A
+    </div>
+    <div id="tileangle">
+      Tile Angle: N/A
+    </div>
+    <div id="maptap" tabindex="0">
+      Click on me and start tapping!
+    </div>
+
+  <script>
+
+    //-----------------------
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    var context = new AudioContext();
+    var timer, noteCount, counting, notesPlayed;
+    var delta = 0;
+    var curTime = 0.0;
+    function schedule() {
+      while(curTime < context.currentTime + 0.1) {
+				if(hasStarted) {
+        playNote(curTime);
+        updateTime();
+				} else {
+					break;
+				}
+      }
+      timer = window.setTimeout(schedule, 0.1);
+      }
+
+      function updateTime() {
+      curTime += 60.0 / (document.getElementById("BPM").value);
+      noteCount++;
+      }
+
+      function playNote(t) {
+        var note = context.createOscillator();
+				note.frequency.value = 800;
+        note.connect(context.destination);
+//        note.start(t);
+//        note.stop(t + 0.05);
+      }
+    //------------------------
+
+
+    function closest(needle, haystack) {
+      return haystack.reduce((a, b) => {
+          let aDiff = Math.abs(a - needle);
+          let bDiff = Math.abs(b - needle);
+
+          if (aDiff == bDiff) {
+              return a > b ? a : b;
+          } else {
+              return bDiff < aDiff ? b : a;
+          }
+      });
+    }
+
+    now = Date.now();
+
+    var pathData = [];
+
+    var currAngle = 0;
+
+		var snappedAngle;
+
+    var validAngles = [-180,-165,-150,-135,-120,-105,-90,-75,-60,-45,-30,-15,0,15,30,45,60,75,90,105,120,135,150,165,180];
+         
+    var values = ["L","W","H","Q","G","q","U","o","T","E","J","p","R","A","M","C","B","Y","D","V","F","Z","N","x","L"]; 
+      
+    var map = new Map(); 
+      
+    for(var i = 0; i < validAngles.length; i++){ 
+        map.set(validAngles[i], values[i]); 
+    } 
+
+		const downloadToFile = (content, filename, contentType) => {
+			const a = document.createElement('a');
+			const file = new Blob([content], {type: contentType});
+			
+			a.href= URL.createObjectURL(file);
+			a.download = filename;
+			a.click();
+
+			URL.revokeObjectURL(a.href);
+		};
+
+		function parseTileAngle(d) {
+			snappedAngle = closest(((d + 180) % 360) - 180,validAngles);
+			var oldCurrAngle = currAngle;
+			currAngle = ((currAngle + snappedAngle) % 360);
+			yesAngle = ((currAngle + 180) % 360)
+			if (yesAngle > 180) {
+				yesAngle -= 360;
+			} 
+			yesAngle  = Math.round(yesAngle / document.getElementById("accuracy").value) * document.getElementById("accuracy").value;
+			console.log(yesAngle);
+			newTile = map.get(yesAngle, validAngles);
+			return newTile;
+		} 
+
+		function saveFile(path, bpm) {
+			var savedText = "{\r\n\t\"pathData\": \""
+			+ path
+			+ "\", \r\n\t\"settings\":\r\n\t{\r\n\t\t\"version\": 3, \r\n\t\t\"artist\": \"Artist\", \r\n\t\t\"specialArtistType\": \"None\", \r\n\t\t\"artistPermission\": \"\", \r\n\t\t\"song\": \"Song\", \r\n\t\t\"author\": \"Author\", \r\n\t\t\"separateCountdownTime\": \"Enabled\", \r\n\t\t\"previewImage\": \"\", \r\n\t\t\"previewIcon\": \"\", \r\n\t\t\"previewIconColor\": \"003f52\", \r\n\t\t\"previewSongStart\": 0, \r\n\t\t\"previewSongDuration\": 10, \r\n\t\t\"seizureWarning\": \"Disabled\", \r\n\t\t\"levelDesc\": \"Say something about your level!\", \r\n\t\t\"levelTags\": \"\", \r\n\t\t\"artistLinks\": \"\", \r\n\t\t\"difficulty\": 1, ,\r\n\t\t\"songFilename\": \"\", \r\n\t\t\"bpm\": "
+			+ bpm
+			+ ", \r\n\t\t\"volume\": 100, \r\n\t\t\"offset\": 0, \r\n\t\t\"pitch\": 100, \r\n\t\t\"hitsound\": \"Kick\", \r\n\t\t\"hitsoundVolume\": 100, \r\n\t\t\"countdownTicks\": 4,\r\n\t\t\"trackColorType\": \"Single\", \r\n\t\t\"trackColor\": \"debb7b\", \r\n\t\t\"secondaryTrackColor\": \"ffffff\", \r\n\t\t\"trackColorAnimDuration\": 2, \r\n\t\t\"trackColorPulse\": \"None\", \r\n\t\t\"trackPulseLength\": 10, \r\n\t\t\"trackStyle\": \"Standard\", \r\n\t\t\"trackAnimation\": \"None\", \r\n\t\t\"beatsAhead\": 3, \r\n\t\t\"trackDisappearAnimation\": \"None\", \r\n\t\t\"beatsBehind\": 4,\r\n\t\t\"backgroundColor\": \"000000\", \r\n\t\t\"showDefaultBGIfNoImage\": \"Enabled\", \r\n\t\t\"bgImage\": \"\", \r\n\t\t\"bgImageColor\": \"ffffff\", \r\n\t\t\"parallax\": [100, 100], \r\n\t\t\"bgDisplayMode\": \"FitToScreen\", \r\n\t\t\"lockRot\": \"Disabled\", \r\n\t\t\"loopBG\": \"Disabled\", \r\n\t\t\"unscaledSize\": 100,\r\n\t\t\"relativeTo\": \"Player\", \r\n\t\t\"position\": [0, 0], \r\n\t\t\"rotation\": 0, \r\n\t\t\"zoom\": 100,\r\n\t\t\"bgVideo\": \"\", \r\n\t\t\"loopVideo\": \"Disabled\", \r\n\t\t\"vidOffset\": 0, \r\n\t\t\"floorIconOutlines\": \"Disabled\", \r\n\t\t\"stickToFloors\": \"Disabled\", \r\n\t\t\"planetEase\": \"Linear\", \r\n\t\t\"planetEaseParts\": 1\r\n\t},\r\n\t\"actions\":\r\n\t[\r\n\t]\r\n}";
+			downloadToFile(savedText, 'tapped_map.adofai', 'text/plain');
+		}
+
+
+    hasStarted = false;
+		var sel = document.getElementById('sel');
+var button = document.getElementById('button');
+    document.querySelector('#maptap').addEventListener('keydown', function (e) {
+      if (document.getElementById("BPM").value !== "") { 
+        if (hasStarted) {
+          delay = Date.now() - now;
+          now = Date.now();
+
+        } else {
+          now = Date.now();
+					delay = 0;
+					hasStarted = true;
+					tileAngle = 0;
+					pathData = [];
+					playNote(0);
+          schedule();
+					currAngle = 0;
+        }
+        bpmInMs = 60000 / document.getElementById("BPM").value;
+        beatDelay = delay / bpmInMs;
+        tileAngle = parseInt(beatDelay * 180) - 180;
+				if (tileAngle < 187) {
+					var lastTile = parseTileAngle(tileAngle);
+					pathData.push(lastTile);
+				} else {
+					console.log(pathData.toString().replace(/,/g, ''));
+					hasStarted = false;
+					saveFile(pathData.toString().replace(/,/g, ''), document.getElementById("BPM").value)
+				}
+        document.getElementById("tileangle").innerHTML = "Tile Angle: " + tileAngle;
+				document.getElementById("absangle").innerHTML = "Absolute Angle: " + yesAngle;
+        document.getElementById("beatdelay").innerHTML = "Beat Delay: " + beatDelay;
+        document.getElementById("lasthit").innerHTML = "Last Tile: " + lastTile;
+				}
+    })
+  </script>
+</body>
+</html>
+<html>
+<head>
+  <title>ADOFAI Map Tap</title>
+	<style>
+		body {
+			color: #b0b0b0;
+			background-color: black;
+			font-family: godoMaum;
+			font-size: 30px;
+			margin-left: 35px;
+		}
+
+		h1 {
+			color: #ffffff;
+			margin-left: -10px;
+		}
+
+		input[type=number] {
+			background-color: #00000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		option {
+			background-color: #000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		select {
+			background-color: #000000;
+			color: white;
+			border: none;
+			resize: none;
+			font-size: 30px;
+		}
+
+		div[id=maptap] {
+			font-size: 40px;
+			color:#e0e0e0;
+			font-weight: bold;
+		}
+</style>
+</head>
+<body>
+		<h1>THIS SITE IS OUTDATED!</h1>
+		<p>This was made before angle paths, meaning it can only have accuracy up to 15 degrees.<br>
+		It's also pretty buggy. Use with a grain of salt.</p>
+		<hr>
+    <h1>ADOFAI Map Tap Tool</h1>
+    <div>
+			To finish the map, wait 2 beats before hitting.<br>
+			For accuracy's sake, it's highly recommended play the song at half speed and BPM, or less.
+    </div>
+		<br>
+		<label for="acc">Angle Snapping Accuracy:</label>
+		<select name="acc" id="accuracy">
+			<option value=90>90 degrees</option>
+			<option value=60>60 degrees</option>
+			<option value=45 selected="selected">45 degrees</option>
+			<option value=30>30 degrees</option>
+			<option value=15>15 degrees</option>
+		</select>
+    <div> Song's BPM: <input type="number" id="BPM" placeholder="BPM"></input> </div>
+		<br>
+    <div id="lasthit">
+      Last Tile: N/A
+    </div>
+		<div id="absangle">
+      Absolute Angle: N/A
+    </div>
+    <div id="beatdelay">
+      Beat Delay: N/A
+    </div>
+    <div id="tileangle">
+      Tile Angle: N/A
+    </div>
+    <div id="maptap" tabindex="0">
+      Click on me and start tapping!
+    </div>
+
+  <script>
+
+    //-----------------------
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    var context = new AudioContext();
+    var timer, noteCount, counting, notesPlayed;
+    var delta = 0;
+    var curTime = 0.0;
+    function schedule() {
+      while(curTime < context.currentTime + 0.1) {
+				if(hasStarted) {
+        playNote(curTime);
+        updateTime();
+				} else {
+					break;
+				}
+      }
+      timer = window.setTimeout(schedule, 0.1);
+      }
+
+      function updateTime() {
+      curTime += 60.0 / (document.getElementById("BPM").value);
+      noteCount++;
+      }
+
+      function playNote(t) {
+        var note = context.createOscillator();
+				note.frequency.value = 800;
+        note.connect(context.destination);
+//        note.start(t);
+//        note.stop(t + 0.05);
+      }
+    //------------------------
+
+
+    function closest(needle, haystack) {
+      return haystack.reduce((a, b) => {
+          let aDiff = Math.abs(a - needle);
+          let bDiff = Math.abs(b - needle);
+
+          if (aDiff == bDiff) {
+              return a > b ? a : b;
+          } else {
+              return bDiff < aDiff ? b : a;
+          }
+      });
+    }
+
+    now = Date.now();
+
+    var pathData = [];
+
+    var currAngle = 0;
+
+		var snappedAngle;
+
+    var validAngles = [-180,-165,-150,-135,-120,-105,-90,-75,-60,-45,-30,-15,0,15,30,45,60,75,90,105,120,135,150,165,180];
+         
+    var values = ["L","W","H","Q","G","q","U","o","T","E","J","p","R","A","M","C","B","Y","D","V","F","Z","N","x","L"]; 
+      
+    var map = new Map(); 
+      
+    for(var i = 0; i < validAngles.length; i++){ 
+        map.set(validAngles[i], values[i]); 
+    } 
+
+		const downloadToFile = (content, filename, contentType) => {
+			const a = document.createElement('a');
+			const file = new Blob([content], {type: contentType});
+			
+			a.href= URL.createObjectURL(file);
+			a.download = filename;
+			a.click();
+
+			URL.revokeObjectURL(a.href);
+		};
+
+		function parseTileAngle(d) {
+			snappedAngle = closest(((d + 180) % 360) - 180,validAngles);
+			var oldCurrAngle = currAngle;
+			currAngle = ((currAngle + snappedAngle) % 360);
+			yesAngle = ((currAngle + 180) % 360)
+			if (yesAngle > 180) {
+				yesAngle -= 360;
+			} 
+			yesAngle  = Math.round(yesAngle / document.getElementById("accuracy").value) * document.getElementById("accuracy").value;
+			console.log(yesAngle);
+			newTile = map.get(yesAngle, validAngles);
+			return newTile;
+		} 
+
+		function saveFile(path, bpm) {
+			var savedText = "{\r\n\t\"pathData\": \""
+			+ path
+			+ "\", \r\n\t\"settings\":\r\n\t{\r\n\t\t\"version\": 3, \r\n\t\t\"artist\": \"Artist\", \r\n\t\t\"specialArtistType\": \"None\", \r\n\t\t\"artistPermission\": \"\", \r\n\t\t\"song\": \"Song\", \r\n\t\t\"author\": \"Author\", \r\n\t\t\"separateCountdownTime\": \"Enabled\", \r\n\t\t\"previewImage\": \"\", \r\n\t\t\"previewIcon\": \"\", \r\n\t\t\"previewIconColor\": \"003f52\", \r\n\t\t\"previewSongStart\": 0, \r\n\t\t\"previewSongDuration\": 10, \r\n\t\t\"seizureWarning\": \"Disabled\", \r\n\t\t\"levelDesc\": \"Say something about your level!\", \r\n\t\t\"levelTags\": \"\", \r\n\t\t\"artistLinks\": \"\", \r\n\t\t\"difficulty\": 1, ,\r\n\t\t\"songFilename\": \"\", \r\n\t\t\"bpm\": "
+			+ bpm
+			+ ", \r\n\t\t\"volume\": 100, \r\n\t\t\"offset\": 0, \r\n\t\t\"pitch\": 100, \r\n\t\t\"hitsound\": \"Kick\", \r\n\t\t\"hitsoundVolume\": 100, \r\n\t\t\"countdownTicks\": 4,\r\n\t\t\"trackColorType\": \"Single\", \r\n\t\t\"trackColor\": \"debb7b\", \r\n\t\t\"secondaryTrackColor\": \"ffffff\", \r\n\t\t\"trackColorAnimDuration\": 2, \r\n\t\t\"trackColorPulse\": \"None\", \r\n\t\t\"trackPulseLength\": 10, \r\n\t\t\"trackStyle\": \"Standard\", \r\n\t\t\"trackAnimation\": \"None\", \r\n\t\t\"beatsAhead\": 3, \r\n\t\t\"trackDisappearAnimation\": \"None\", \r\n\t\t\"beatsBehind\": 4,\r\n\t\t\"backgroundColor\": \"000000\", \r\n\t\t\"showDefaultBGIfNoImage\": \"Enabled\", \r\n\t\t\"bgImage\": \"\", \r\n\t\t\"bgImageColor\": \"ffffff\", \r\n\t\t\"parallax\": [100, 100], \r\n\t\t\"bgDisplayMode\": \"FitToScreen\", \r\n\t\t\"lockRot\": \"Disabled\", \r\n\t\t\"loopBG\": \"Disabled\", \r\n\t\t\"unscaledSize\": 100,\r\n\t\t\"relativeTo\": \"Player\", \r\n\t\t\"position\": [0, 0], \r\n\t\t\"rotation\": 0, \r\n\t\t\"zoom\": 100,\r\n\t\t\"bgVideo\": \"\", \r\n\t\t\"loopVideo\": \"Disabled\", \r\n\t\t\"vidOffset\": 0, \r\n\t\t\"floorIconOutlines\": \"Disabled\", \r\n\t\t\"stickToFloors\": \"Disabled\", \r\n\t\t\"planetEase\": \"Linear\", \r\n\t\t\"planetEaseParts\": 1\r\n\t},\r\n\t\"actions\":\r\n\t[\r\n\t]\r\n}";
+			downloadToFile(savedText, 'tapped_map.adofai', 'text/plain');
+		}
+
+
+    hasStarted = false;
+		var sel = document.getElementById('sel');
+var button = document.getElementById('button');
+    document.querySelector('#maptap').addEventListener('keydown', function (e) {
+      if (document.getElementById("BPM").value !== "") { 
+        if (hasStarted) {
+          delay = Date.now() - now;
+          now = Date.now();
+
+        } else {
+          now = Date.now();
+					delay = 0;
+					hasStarted = true;
+					tileAngle = 0;
+					pathData = [];
+					playNote(0);
+          schedule();
+					currAngle = 0;
+        }
+        bpmInMs = 60000 / document.getElementById("BPM").value;
+        beatDelay = delay / bpmInMs;
+        tileAngle = parseInt(beatDelay * 180) - 180;
+				if (tileAngle < 187) {
+					var lastTile = parseTileAngle(tileAngle);
+					pathData.push(lastTile);
+				} else {
+					console.log(pathData.toString().replace(/,/g, ''));
+					hasStarted = false;
+					saveFile(pathData.toString().replace(/,/g, ''), document.getElementById("BPM").value)
+				}
+        document.getElementById("tileangle").innerHTML = "Tile Angle: " + tileAngle;
+				document.getElementById("absangle").innerHTML = "Absolute Angle: " + yesAngle;
+        document.getElementById("beatdelay").innerHTML = "Beat Delay: " + beatDelay;
+        document.getElementById("lasthit").innerHTML = "Last Tile: " + lastTile;
+				}
+    })
+  </script>
+</body>
+</html>

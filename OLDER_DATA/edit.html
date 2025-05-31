@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: monospace;
+      white-space: pre;
+    }
+    div.grid-master {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    div.monaco {
+      resize: horizontal;
+      overflow: auto;
+      min-width: 5em;
+      width: 50%;
+      font-family: monospace;
+    }
+    div.output {
+      background-color: blue;
+      min-width: 5em;
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+    }
+    button.save {
+      height: auto;
+      line-height: 1.4em;
+      background-color: #0e639c;
+      border-radius: 0.15em;
+      border: 0;
+      position: absolute;
+      font-size: 13px;
+      padding: 0.3em;
+      right: 3em;
+      width: 8em;
+      bottom: 3em;
+      color: white;
+      font-family: system-ui,Ubuntu,sans-serif;
+      z-index: 100000;
+    }
+    button.save:hover {
+      background-color: #17b;
+    }
+    iframe.outframe {
+      flex: 3;
+      border: 0;
+      background-color: white;
+    }
+    div.minimap {
+    	opacity: 60%;
+    }
+    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Basic HTML editor made with Monaco editor.">
+    <title>HTML Editor</title>
+    <link rel="icon" type="image/x-icon" href="https://sno.mba/favicon.png">
+  </head>
+  <body>
+    <script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js" id="monacoLoader"></script>
+    <script>
+      function updateEditor () {
+      	document.querySelector(".outframe").src = "data:text/html;base64," + btoa(document.monacoEditor.getValue());
+      }
+      
+      require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
+      window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+      let proxy = URL.createObjectURL(new Blob([`
+          self.MonacoEnvironment = {
+              baseUrl: 'https://unpkg.com/monaco-editor@latest/min/'
+          };
+          importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
+      `], { type: 'text/javascript' }));
+      require(["vs/editor/editor.main"], function () {
+          document.monacoEditor = monaco.editor.create(document.getElementById('editor'), {
+              value: `<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <meta name="description" content=""> <!-- put page description here -->
+        <title> </title> <!-- put page title here -->
+        <style>
+        </style> <!-- put page css here -->
+    </head>
+    <body>
+        <p>
+        </p> <!-- put some text or whatever -->
+        <script>
+        &lt;/script> <!-- put javascript here -->
+    </body>
+</html>`.replace("&lt;", "<"),
+              language: 'html',
+              theme: 'vs-dark',
+              automaticLayout: true
+          });
+      });
+
+      console.log("Loaded Monaco!");
+      let timeoutId;
+      
+      function startUpdateTimer(e) {
+      	clearTimeout(timeoutId);
+      	timeoutId = setTimeout(updateEditor, 1000);
+      }
+
+      function saveHTML() {
+            let link = document.createElement("a");
+            link.href = document.querySelector('.outframe').src;
+            link.download = "file";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+      }
+    </script>
+    <button class="save" onclick="saveHTML(event);">Save Page</button>
+    <div class="grid-master">
+      <div class="monaco" id="editor" oninput="startUpdateTimer(event);"></div>
+      <div class="output" id="output">
+        <iframe class="outframe" id="outframe" src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KICAgIDxoZWFkPgogICAgICAgIDxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KICAgICAgICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoIj4KICAgICAgICA8bWV0YSBuYW1lPSJkZXNjcmlwdGlvbiIgY29udGVudD0iIj4gPCEtLSBwdXQgcGFnZSBkZXNjcmlwdGlvbiBoZXJlIC0tPgogICAgICAgIDx0aXRsZT4gPC90aXRsZT4gPCEtLSBwdXQgcGFnZSB0aXRsZSBoZXJlIC0tPgogICAgICAgIDxzdHlsZT4KICAgICAgICA8L3N0eWxlPiA8IS0tIHB1dCBwYWdlIGNzcyBoZXJlIC0tPgogICAgPC9oZWFkPgogICAgPGJvZHk+CiAgICAgICAgPHA+CiAgICAgICAgPC9wPiA8IS0tIHB1dCBzb21lIHRleHQgb3Igd2hhdGV2ZXIgLS0+CiAgICAgICAgPHNjcmlwdD4KICAgICAgICA8L3NjcmlwdD4gPCEtLSBwdXQgamF2YXNjcmlwdCBoZXJlIC0tPgogICAgPC9ib2R5Pgo8L2h0bWw+" />
+      </div>
+    </div>
+  </body>
+</html>

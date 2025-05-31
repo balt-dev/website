@@ -1,0 +1,5 @@
+RedirectMatch 301 ^/chill/invite https://discord.com/api/oauth2/authorize?client_id=753421978324566046&permissions=370752&scope=applications.commands%20bot
+RedirectMatch 301 ^/chill/server https://discord.gg/ktk8XkAfGD
+RedirectMatch 301 ^/chill/github https://github.com/balt-dev/robot-is-chill
+RedirectMatch 301 ^/dfpaint https://dfpaint-server.heptor.repl.co/
+ErrorDocument 404 /404.html

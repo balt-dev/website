@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Brainfuck Interpreter</title>
+		<style>
+			body {
+				background-color: black;
+				display: block;
+			}
+			textarea {
+				background-color: rgba(0,0,0,0);
+				color: white;
+				resize: none;
+				width: 30%;
+			}
+			button {
+				background-color: rgba(0,0,0,0);
+				color: white;
+				width: 30.26%;
+				border: 1px solid gray;
+			}
+		</style>
+  </head>
+  <body>
+		<div>
+			<textarea style="float:right; width:65%; resize:none;" id="output" disabled="true">Output</textarea>
+		</div>
+		<div>
+			<button id="run" onclick="runBFCode()"><b>Run</b></button>
+ 	   	<textarea id="program" style="height: 700px;" placeholder="++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."></textarea>
+		</div>
+		<script>
+			function sleep(milliseconds) {
+				const date = Date.now();
+				let currentDate = null;
+				do {
+					currentDate = Date.now();
+				} while (currentDate - date < milliseconds);
+			}
+			function fixSizes() {
+				document.getElementById("output").style.height = (window.innerHeight-32) + "px";
+				document.getElementById("run").style.width = document.getElementById("program").style.width + "px";
+				document.getElementById("program").style.height = (window.innerHeight-50) + "px";
+			}
+			function mod(x, m) {
+				return (x + m)%m;
+			}
+			window.setInterval(fixSizes(), 50);
+			function runBFCode() {
+				document.getElementById("output").value = "";
+				let pointerIndex = 0;
+				let readerIndex = 0;
+				let array = new Uint8Array(32768);
+				let bfCode = document.getElementById("program").value;
+				let isRunning = true;
+				let listOfLoopStarts = [];
+				while (isRunning) {
+					if (readerIndex >= bfCode.length) {
+						console.log("Done!");
+						isRunning = false;
+						break;
+					}
+					//console.log("%c" + bfCode.substring(0,readerIndex) + "%c" + bfCode[readerIndex] + "%c" + bfCode.substring(readerIndex+1), "color:gray", "color:white", "color:gray");
+					//console.log("%cPointer: %c" + ('0000'+pointerIndex.toString(16)).slice(-4) + " " + ('00'+array[pointerIndex].toString(16)).slice(-2), "color:gray", "color:white");
+					switch (bfCode[readerIndex]) {
+						case ">":
+							pointerIndex++;
+							pointerIndex = Math.min(pointerIndex, 32767);
+							break;
+						case "<":
+							pointerIndex--;
+							pointerIndex = Math.max(pointerIndex, 0);
+							break;
+						case "+":
+							array[pointerIndex]++;
+							break;
+						case "-":
+							array[pointerIndex]--;
+							break;
+						case ".":
+							document.getElementById("output").value += String.fromCharCode(array[pointerIndex]);
+							console.log(String.fromCharCode(array[pointerIndex]));
+							break;
+						case ",":
+							try {
+								array[pointerIndex] = prompt("One character input requested at " + pointerIndex)[0].charCodeAt(0);
+							} catch {
+								array[pointerIndex] = null;
+							}
+							break;
+						case "[":
+							let n = 0;
+							if (array[pointerIndex] == 0) {
+								while (true) {
+									if (bfCode[readerIndex] == "]") {
+										if (n == 0) {
+											break;
+										} else {
+											n--;
+										}
+									} else {
+										readerIndex++;
+										if (bfCode[readerIndex] == "[") {
+											n++;
+										}
+									}
+								}
+							} else {
+								listOfLoopStarts.push(readerIndex);
+								break;
+							}
+						case "]":
+							if (array[pointerIndex] != 0) {
+								readerIndex = listOfLoopStarts.pop() - 1;
+								break;
+							}
+							listOfLoopStarts.pop();
+					}
+					readerIndex++;
+				}
+			}
+		</script>
+  </body>
+</html>

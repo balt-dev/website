@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			textarea {
+				resize: none;
+				width: 100%;
+				height: 100%;
+				padding: 0px;
+    		white-space: nowrap;
+			}
+			div.outer {
+				min-height: 4em; 
+				display: flex; 
+				resize: vertical; 
+				overflow: hidden; 
+				border: 1px rgba(0,0,0,0.5) solid; 
+				border-radius: 2px;
+			} 
+			div.inner{
+				flex: 1; 
+				height: auto; 
+				margin: 10px;
+			}
+			div.inner.left{
+				margin-right: 5px;
+			}
+			div.inner.right{
+				margin-left: 5px;
+			}
+			h1 {
+				text-align: center;
+			}
+			header {
+				position: absolute;
+			}
+		</style>
+	</head>
+	<body>
+		<header><a href='../'>Home</a></header>
+		<h1>Base64 Converter</h1>
+		<div class='outer'>
+			<div class='inner left'>
+				<textarea id='b' oninput='cba()' onresize="fixHeightB()" placeholder='Decoded'></textarea>
+			</div>
+			<div class='inner right'>
+				<textarea id='a' oninput='cab()' onresize="fixHeightA()" placeholder='Encoded'></textarea>
+			</div>
+		</div>
+		<script>
+			function cab(){
+				document.getElementById('b').value = atob(document.getElementById('a').value);
+			};
+			function cba(){
+				document.getElementById('a').value = btoa(document.getElementById('b').value);
+			};
+	  </script>
+	</body>
+</html>

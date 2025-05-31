@@ -1,0 +1,410 @@
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta name="description" content=""> <!-- put page description here -->
+	<title> </title> <!-- put page title here -->
+	<script>
+	</script>
+	<style>
+		body {
+			margin: auto;
+			overflow: hidden;
+		}
+
+		div[id=position] {
+			position: absolute;
+			border-style: solid;
+			border-color: rgba(255, 255, 255, 0.4);
+			border-width: 1px;
+			border-radius: 3px;
+			background: rgba(255, 255, 255, 0.2);
+			user-select: none;
+			padding-right: 5px;
+			padding-left: 5px;
+			color: white;
+		}
+
+		button[id=openSettings] {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			border-style: solid;
+			border-color: rgba(255, 255, 255, 0.4);
+			border-width: 2px;
+			border-radius: 5px;
+			background: rgba(255, 255, 255, 0.2);
+			padding-right: 5px;
+			padding-left: 5px;
+			color: white;
+		}
+		a {
+			top: 0px;
+			left: 0px;
+			border-style: solid;
+			border-color: rgba(255, 255, 255, 0.4);
+			border-width: 2px;
+			border-radius: 5px;
+			background: rgba(255, 255, 255, 0.2);
+			padding-right: 5px;
+			padding-left: 5px;
+			color: white;
+		}
+		button {
+			top: 0px;
+			left: 0px;
+			border-style: solid;
+			border-color: rgba(255, 255, 255, 0.4);
+			border-width: 2px;
+			border-radius: 5px;
+			background: rgba(255, 255, 255, 0.2);
+			padding-right: 5px;
+			padding-left: 5px;
+			color: white;
+		}
+		button[id=step] {
+			margin-left: 20px;
+		}
+		button:hover {
+			background: rgba(255, 255, 255, 0.3);
+		}
+		input {
+			top: 0px;
+			left: 0px;
+			border-style: solid;
+			border-color: rgba(255, 255, 255, 0.4);
+			border-width: 2px;
+			border-radius: 5px;
+			background: rgba(255, 255, 255, 0.2);
+			padding-right: 5px;
+			padding-left: 5px;
+			color: white;
+		}
+		input:hover {
+			background: rgba(255, 255, 255, 0.3);
+		}
+		div[id=settings] {
+			position: absolute;
+			display: table-cell;
+ 			 vertical-align: bottom;
+			width: 100%;
+			top: 0px;
+			border-style: solid;
+			border-color: rgba(255, 255, 255, 0.4);
+			border-width: 0px;
+			border-bottom-width: 2px;
+			background: rgba(127, 127, 127, 0.4);
+			padding: 5px;
+			color: white;
+			mix-blend-mode: difference;
+		}
+		/* Customize the label (the container) */
+		.container {
+		display: block;
+		position: relative;
+		cursor: pointer;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		display: inline-block;
+		user-select: none;
+		}
+
+		/* Hide the browser's default checkbox */
+		.container input {
+		position: absolute;
+		opacity: 0;
+		cursor: pointer;
+		display: inline-block;
+		height: 0px;
+		width: 0px;
+		}
+
+		/* Create a custom checkbox */
+		.checkmark {
+		position: absolute;
+		width: 16px;
+		height: 16px;
+		border-style: solid;
+		border-color: rgba(255, 255, 255, 0.4);
+		border-width: 2px;
+		border-radius: 5px;
+		background: rgba(255, 255, 255, 0.2);
+		display: inline-block;
+		color: white;
+		}
+
+		/* On mouse-over, add a grey background color */
+		.container:hover input ~ .checkmark {
+		background-color: rgba(255, 255, 255, 0.4);
+		}
+
+		/* When the checkbox is checked, add a blue background */
+		.container input:checked ~ .checkmark {
+			background-color: rgba(255, 255, 255, 0.4);
+		}
+
+		/* Create the checkmark/indicator (hidden when not checked) */
+		.checkmark:after {
+		content: "";
+		position: absolute;
+		display: none;
+		}
+
+		/* Show the checkmark when checked */
+		.container input:checked ~ .checkmark:after {
+		display: block;
+		}
+
+		/* Style the checkmark/indicator */
+		.container .checkmark:after {
+			left: 3px;
+			top: 3px;
+			width: 10px;
+			height: 10px;
+			background: rgb(255, 255, 255);
+			border-radius: 2px;
+			border-width: 2px;
+			border-color: rgba(255, 255, 255, 0.4);
+		}
+		div[id="position"] {
+			color: white;
+  			mix-blend-mode: difference;
+		}
+	</style> <!-- put page css here -->
+</head>
+
+<body onmousemove="getPos(event)" onkeydown="keyDown(event)" onkeyup="keyUp(event)">
+	<p style="margin: auto; color: white; mix-blend-mode: difference;     position: absolute; bottom: 0; width: 100%;">Arrow keys to pan, left shift to toggle simulation, right shift to go to [0,0], scroll to zoom</p>
+	<button type="button" id="openSettings" onclick="openSettings()">Settings</button>
+	<div id="settings" style="display:none">
+			<button type="button" id="closeSettings" onclick="openSettings()">Settings</button>
+			<label for="rules">Rules</label>
+			<input id="rules" style="width: 51px;" onkeypress="this.style.width = (((this.value.length + 3) * 8)+3) + 'px';" name="rules" value="23/3"></input>
+			<label for="delay">Delay</label>
+			<input id="delay" style="width: 35px;" onkeypress="this.style.width = (((this.value.length + 3) * 8)+3) + 'px';" name="delay" value="20"></input>
+			<label for="step">Steps</label>
+			<input id="step" style="width: 27px;" onkeypress="this.style.width = (((this.value.length + 3) * 8)+3) + 'px';" name="step" value="1"></input>
+			<label for="movespeed">Movement Speed</label>
+			<input id="movespeed" style="width: 35px;" onkeypress="this.style.width = (((this.value.length + 3) * 8)+3) + 'px';" name="movespeed" value="20"></input>
+			<label class="container">Simulate?<input type="checkbox" id="simtoggle"><span class="checkmark"></span></label>
+			<button type="button" id="step" onclick="simulate()">Step Simulation</button>
+			<input id="fileInput" type="file" accept="application/json" onchange="loadBoard()" style="display:none;" />
+			<button type="button" id="loadBoard" onclick="let _ = confirm('Are you sure? This will overwrite your current board.') ? document.getElementById('fileInput').click() : null;">Load Board</button>
+			<button type="button" id="saveBoard" onclick="saveBoard()">Save Board</button>
+			<button type="button" id="clearBoard" onclick="liveTiles = confirm('Are you sure? This will clear your current board.') ? [] : liveTiles">Clear Board</button>
+			<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">About...</a><br>This webpage can be saved to your own device, and it'll run offline no problem!
+	</div>
+	<canvas id="canvas" onclick="toggleCellMouse(event)" onwheel="zoom(event)" width="1000" height="1000"></canvas>
+	<div onwheel="zoom(event)" onmousemove="getPos(event)" id="position"></div>
+	<script>
+		const reducer = (accumulator, currentValue) => accumulator + currentValue;
+		window.addEventListener("auxclick", (event) => {
+		if (event.button === 1) event.preventDefault();
+		});
+
+		function ceil(number, increment, offset) {
+			return Math.ceil((number - offset) / increment ) * increment + offset;
+		}
+		function mod(n, m) {
+		return ((n % m) + m) % m;
+		}
+		function arrayIndexOf(arr,o) {    
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i].x == o.x && arr[i].y == o.y) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		var liveTiles = [];
+		var keysPressed = {};
+		var canvasX = 0;
+		var canvasY = 0;
+		var averageX = 0;
+		var averageY = 0;
+		var canvasZoom = 1;
+		var mouseX = 0;
+		var mouseY = 0;
+		var mouseTileXOff = 0;
+		var mouseTileYOff = 0;
+		var timer = 0;
+		var p = document.getElementById('position');
+		var canvas = document.getElementById('canvas');
+		if (!canvas.getContext) {
+			throw 'canvas not supported';
+		}
+		var ctx = canvas.getContext('2d');
+		function getMousePos(canvas, evt) {
+			var rect = canvas.getBoundingClientRect();
+			return {
+				x: evt.clientX - rect.left, y: evt.clientY - rect.top
+			};
+		}
+		function openSettings() {
+			document.getElementById('settings').style.display = (document.getElementById('settings').style.display == "none") ? "table-cell" : "none";
+			document.getElementById('openSettings').style.display = (document.getElementById('openSettings').style.display == "none") ? "block" : "none";
+		}
+		function toggleCellMouse(e) {
+			if(e.button == 0) {
+				if (arrayIndexOf(liveTiles,{x: mouseTileXOff, y: mouseTileYOff}) != -1) {
+					liveTiles.splice(arrayIndexOf(liveTiles,{x: mouseTileXOff, y: mouseTileYOff}),1);
+				} else {
+					liveTiles.push({x: mouseTileXOff, y: mouseTileYOff});
+				}
+			} 
+		}
+		function zoom(event) {
+			if (event.deltaY < 0) {
+				canvasZoom *= 1.25;
+			} else {
+				canvasZoom *= 0.8;
+			}
+		}
+		function loadBoard() {
+			var GetFile = new FileReader();
+			GetFile.onload=function(){
+				liveTiles = (JSON.parse(atob(GetFile.result)));
+				console.log(liveTiles)
+			}
+			GetFile.readAsText(document.getElementById('fileInput').files[0]);
+		}
+		function saveBoard() {
+			var pom = document.createElement('a');
+			pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(btoa(JSON.stringify(liveTiles))));
+			let filename = prompt("Filename?", ""); 
+			if (filename != null && filename != "") {
+				pom.setAttribute('download', (filename + '.base64.json'));
+				if (document.createEvent) {
+					var event = document.createEvent('MouseEvents');
+					event.initEvent('click', true, true);
+					pom.dispatchEvent(event);
+				}
+				else {
+					pom.click();
+				}		
+			}
+			pom.remove();
+		}
+		function getPos(e) {
+			mouseX = getMousePos(canvas, e).x;
+			mouseY = getMousePos(canvas, e).y;
+		}
+		function keyDown(e) {
+			if (event.isComposing || event.keyCode === 229) {
+				return;
+			}
+			if (e.code == "ShiftLeft") {
+				document.getElementById("simtoggle").checked = !(document.getElementById("simtoggle").checked);
+				return;
+			}
+			keysPressed[e.code] = true;
+		}
+		function keyUp(e) {
+			if (event.isComposing || event.keyCode === 229) {
+				return;
+			}
+			delete keysPressed[e.code];
+		}
+		function main() {
+			timer++
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			ctx.fillStyle = "black";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			rectSize = canvasZoom * 50;
+			let mouseTileX = Math.floor((mouseX) / rectSize);
+			let mouseTileY = Math.floor((mouseY) / rectSize);
+			mouseTileXOff = Math.floor((mouseX + canvasX) / rectSize);
+			mouseTileYOff = Math.floor((mouseY + canvasY) / rectSize);
+			p.style.left = mouseX + "px";
+			p.style.top = (mouseY - 22) + "px";
+			p.innerHTML = mouseTileXOff + "," + mouseTileYOff;
+			ctx.strokeStyle = "rgba(255,255,255,"+((0.2*Math.sin(timer/70))+0.8)+")";
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX)+(0.2*rectSize), ((mouseTileYOff*rectSize)-canvasY));
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX), ((mouseTileYOff*rectSize)-canvasY));
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX)+(0.8*rectSize), ((mouseTileYOff*rectSize)-canvasY));
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX)+rectSize, ((mouseTileYOff*rectSize)-canvasY));
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX)+(0.2*rectSize), ((mouseTileYOff*rectSize)-canvasY)+rectSize);
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX), ((mouseTileYOff*rectSize)-canvasY)+rectSize);
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX)+(0.8*rectSize), ((mouseTileYOff*rectSize)-canvasY)+rectSize);
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX)+rectSize, ((mouseTileYOff*rectSize)-canvasY)+rectSize);
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX),((mouseTileYOff*rectSize)-canvasY)+(0.2*rectSize));
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX),((mouseTileYOff*rectSize)-canvasY));
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX),((mouseTileYOff*rectSize)-canvasY)+(0.8*rectSize));
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX),((mouseTileYOff*rectSize)-canvasY)+rectSize);
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX)+rectSize,((mouseTileYOff*rectSize)-canvasY)+(0.2*rectSize));
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX)+rectSize,((mouseTileYOff*rectSize)-canvasY));
+			ctx.moveTo(((mouseTileXOff*rectSize)-canvasX)+rectSize,((mouseTileYOff*rectSize)-canvasY)+(0.8*rectSize));
+			ctx.lineTo(((mouseTileXOff*rectSize)-canvasX)+rectSize,((mouseTileYOff*rectSize)-canvasY)+rectSize);
+			ctx.stroke();
+			for (let tile of liveTiles) {
+				ctx.fillStyle = "white";
+				ctx.fillRect((tile.x*rectSize)-canvasX, (tile.y*rectSize)-canvasY, rectSize, rectSize);
+				ctx.strokeStyle = "black";
+				ctx.strokeRect((tile.x*rectSize)-canvasX, (tile.y*rectSize)-canvasY, rectSize, rectSize);
+			}
+			let movementSpeed = document.getElementById("movespeed").value;
+			if (keysPressed["ArrowDown"]){
+				canvasY += parseInt(movementSpeed);
+			}
+			if (keysPressed["ShiftRight"]) {
+				canvasX = 0;
+				canvasY = 0;
+				canvasZoom = 1;
+			}
+			if (keysPressed["ArrowUp"]){
+				canvasY -= parseInt(movementSpeed);
+			}
+			if (keysPressed["ArrowLeft"]){
+				canvasX -= parseInt(movementSpeed);
+			}
+			if (keysPressed["ArrowRight"]){
+				canvasX += parseInt(movementSpeed);
+			}
+			
+			if (document.getElementById("simtoggle").checked) {
+				if (timer % document.getElementById("delay").value == 0) {
+				simulate();
+				}
+			}
+		}
+		async function simulate() {
+			let rules = document.getElementById('rules').value;
+			for (let steps = 0; steps < document.getElementById("step").value; steps ++){
+				let newLiveTiles = JSON.parse(JSON.stringify(liveTiles));
+				let processedTiles = [];
+				for (let tile of liveTiles) {
+					for (let xOffset = -1; xOffset <=1; xOffset++) {
+						for (let yOffset = -1; yOffset <=1; yOffset++) {
+							let tempTile = {x: (tile.x+xOffset), y: (tile.y+yOffset)}
+							if (!processedTiles.includes((tile.x+xOffset)+","+(tile.y+yOffset))){
+								var neighbors = 0;
+								for (let xOffset2 = -1; xOffset2 <=1; xOffset2++) {
+									for (let yOffset2 = -1; yOffset2 <=1; yOffset2++){
+										neighbors += (arrayIndexOf(liveTiles, {x: (tempTile.x+xOffset2), y: (tempTile.y+yOffset2)}) != -1) ? 1 : 0;
+									}
+								}
+								if (arrayIndexOf(newLiveTiles,{x: (tile.x+xOffset), y: (tile.y+yOffset)}) != -1) {
+									neighbors--;
+									if (!(rules.substring(0, rules.indexOf("/")).split("").map(Number).includes(neighbors))){
+										newLiveTiles.splice(arrayIndexOf(newLiveTiles,{x: (tile.x+xOffset), y: (tile.y+yOffset)}),1);
+									}
+								} else {
+									if ((rules.substring(rules.indexOf("/")).split("").map(Number).includes(neighbors))){
+										newLiveTiles.push(JSON.parse(JSON.stringify(tempTile)));
+									}
+								}
+								processedTiles.push((tile.x+xOffset)+","+(tile.y+yOffset));
+							}
+						}
+					}
+				}
+				liveTiles = JSON.parse(JSON.stringify(newLiveTiles));
+			}
+		}
+		window.setInterval(main, 1);
+	</script>
+</body>
+</html>

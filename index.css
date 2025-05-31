@@ -1,0 +1,144 @@
+:root {
+    --text: #f0e5f4;
+    --background: #181619;
+    --primary: #442944;
+    --secondary: #7a365e;
+    --accent: #b5567a;
+    box-sizing: content-box;
+}
+
+body {
+    background-color: black;
+    color: white;
+    font-family: "Gabarito", Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 150%
+}
+
+h1, h2, h3 {
+    font-family: "Sofia Sans Semi Condensed", 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+canvas#background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: black;
+    z-index: -200;
+    touch-action: none;
+    image-rendering: pixelated;
+    transition: filter 0.25s;
+    filter: brightness(100%);
+}
+
+header.main {
+    border-radius: 7pt;
+    margin: auto;
+    height: 130pt;
+    width: 70%;
+    text-align: center;
+    background-color: var(--background);
+    display: block;
+    margin-bottom: 50pt;
+}
+header.main > div.heading {
+    border-radius: 7pt 7pt 0 0;
+    width: 100%;
+    height: 80pt;
+    background-color: #ffffff20;
+    line-height: 80pt;
+}
+header.main > ul.tabs {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+ul.tabs > li.tab {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 50pt;
+    line-height: 50pt;
+    font-size: 125%;
+    transition: cubic-bezier(0.16, 1, 0.3, 1) background-color 0.3s;
+}
+ul.tabs > li.tab:hover {
+    background-color: #ffffff10;
+}
+li.tab > a {
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+}
+
+main {
+    width: 60%;
+    margin: auto;
+}
+article {
+    border-radius: 5pt;
+    background-color: #181619;
+    padding: 50pt;
+}
+
+dt {
+    font-weight: bold;
+    background-color: #7a365e;
+    padding: 5pt;
+    padding-bottom: 0pt;
+    margin-bottom: 3pt;
+    border-radius: 5pt;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+dd {
+    margin-top: 3pt;
+    margin-left: 0;
+    background-color: #442944;
+    padding: 5pt;
+    padding-top: 0pt;
+    border-radius: 5pt;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-bottom: 30pt;
+}
+
+a.project-link {
+    display: inline-block;
+    background-color: #7a365e;
+    margin: 5pt;
+    margin-left: 0;
+    margin-top: 10pt;
+    padding: 4pt;
+    border-radius: 5pt;
+    text-align: right;
+}
+
+footer {
+    display: block;
+    margin: auto;
+    width: 30%;
+    background-color: #181619;
+    color: #f0e5f4;
+    border-radius: 7pt;
+    margin-top: 100vh;
+    margin-bottom: 5vh;
+    padding: 5pt;
+    text-align: center;
+}
+code {
+    border-radius: 3pt;
+    background-color: #181619;
+    padding: 1pt 3pt;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Sofia+Sans+Semi+Condensed:ital,wght@0,1..1000;1,1..1000&display=swap');
+
+@font-face {
+    font-family: "Bytesized";
+    src: url("Bytesized.ttf");
+}

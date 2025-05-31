@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<meta name="description" content="conway's game of life with checkboxes">
+		<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAASdEVYdFNvZnR3YXJlAEdyZWVuc2hvdF5VCAUAAAB2SURBVDhPvczNDYAgDIZhV2ECxuLKARboOszDBAxS8zVK/CmaqvFNGsrh6cQvEhxjNM8OW/oX11o5hCC7CQN67zmlJH8Vt9bk3XaESMXOOc45y440iFRcSukHRhCpGK0HMBpEQ4xwgIiW37lLfNe32DodP4t5BsxwB7QVuYEDAAAAAElFTkSuQmCC">
+    <title>checkbox cgol</title>
+    <style>
+			/* Chrome, Safari, Edge, Opera */
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
+
+			/* Firefox */
+			input[type=number] {
+				-moz-appearance: textfield;
+			}
+			input[type=checkbox] {
+				margin: 0; 
+				padding: 0;
+			}
+			div {
+				clear: both;
+				overflow: auto;
+			}
+			body {
+				line-height: 0px;
+			}
+			input[type=checkbox]:checked {
+				background:black;
+			}
+
+		</style>
+  </head>
+  <body>
+		<div>
+			<label for="speed">Simulation Speed (ms/tick)</label>
+			<input type="number" name="Simulation Speed (ms/tick)" onchange="updateValue()" id="speed" min=10 value='1000'/>  
+			<button type="button" onclick="toggle()" name="Simulate?" id="simtoggle" >Simulate</button>
+			<hr>
+		</div>
+		<p> you can put <code>?width=&ltinteger&gt&height=&ltinteger&gt</code> at the end of the url to change the board dimensions </p> 
+		<div id="div" name="checkboxes"></div>
+    <script>
+			var isSimulating = false;
+			const urlParams = new URLSearchParams(window.location.search);
+			var width = urlParams.get('width');
+			if (width === null) {
+				width = 50;
+			}
+			var height = urlParams.get('height');
+			if (height === null) {
+				height = 50;
+			}
+			function toggle() {
+				document.getElementById("speed").disabled = !(document.getElementById("speed").disabled);
+				isSimulating = !isSimulating;
+				if (isSimulating) {
+					document.getElementById("simtoggle").innerHTML  = "Stop Simulation";
+				} else {
+					document.getElementById("simtoggle").innerHTML  = "Simulate";
+				}
+			}
+			for (let y = 0; y < height; y++) {
+				for (let x = 0; x < width; x++) {
+					let checkBox = document.createElement("input");
+					checkBox.type = "checkbox";
+					checkBox.id = String(x) + "," +  String(y);
+					document.getElementById("div").appendChild(checkBox);
+				}
+				let br = document.createElement("br");
+				document.getElementById("div").appendChild(br);
+			}
+
+			var intervalID = window.setInterval(cgol, document.getElementById("speed").value);
+
+			function updateValue() {
+				clearInterval(intervalID);
+				var intervalID = window.setInterval(cgol, document.getElementById("speed").value);
+			}
+
+			function cgol() {
+				if (isSimulating) {
+					let arrayList = {};
+					let arrayListNew = {};
+					for (var x = 0; x < width; x++) {
+						arrayList[x] = {};
+						arrayListNew[x] = {};
+						for (var y = 0; y < height; y++) {
+							arrayList[x][y] = document.getElementById(String(x) + "," +  String(y)).checked;
+							arrayListNew[x][y] = document.getElementById(String(x) + "," +  String(y)).checked;
+						}
+					}
+					for (let y = 0; y < height; y++) {
+						for (let x = 0; x < width; x++) {
+							let neighbors = 0;
+							for (let yoff = -1; yoff < 2; yoff++) {
+								for (let xoff = -1; xoff < 2; xoff++) {
+									let xchanged = x+xoff;
+									let ychanged = y+yoff;
+									if (!((xoff == yoff) && (xoff == 0))) {
+										try {
+											if ((typeof arrayList[xchanged][ychanged] != undefined) && (arrayList[xchanged][ychanged] == true)) {
+												neighbors++;
+											}
+										} catch {}
+									}
+								}
+							}
+							if (arrayList[x][y]) {
+								if ((2 > neighbors) || (neighbors > 3)) {
+									arrayListNew[x][y] = false;
+								}
+							} else if (neighbors == 3) {
+								arrayListNew[x][y] = true;
+							}
+						}
+					}
+					for (var x = 0; x < width; x++) {
+						for (var y = 0; y < height; y++) {
+							document.getElementById(String(x) + "," +  String(y)).checked = arrayListNew[x][y];
+						}
+					}
+				}
+			}
+		</script>
+  </body>
+</html>
