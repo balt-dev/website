@@ -132,3 +132,11 @@ function handleAnchor(new_anchor) {
 }
 
 window.addEventListener("load", handleAnchor);
+
+function allowNSFW() {
+    let styleSheet = document.createElement("style")
+    styleSheet.textContent = `
+        .nsfw { display: inherit; }
+    `
+    document.head.appendChild(styleSheet)
+}

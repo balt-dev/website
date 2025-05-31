@@ -9,55 +9,6 @@
 	<title>baltdev::website!()</title>
 	<link rel="stylesheet" type="text/css" href="./index.css">
 	<style id="rapidfix-styles"></style>
-	<style>
-		div.image-gallery {
-		    display: grid;
-		    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		    gap: 20px;
-		    max-width: auto;
-		    margin: 0 auto;
-		    padding: 20px;
-		}
-
-		.image-gallery a, .image-gallery img {
-		    width: 100%;
-		    height: auto;
-		    display: block;
-		    margin: auto 0;
-		    transition: transform 0.2s ease-in-out;
-		    image-rendering: pixelated;
-		}
-
-		.image-gallery img:hover {
-		    transform: scale(1.03);
-		}
-
-		li {
-			list-style-position: inside;
-			margin-left: -1em;
-		}
-
-		li:has(details) {
-			margin-left: -0.7em;
-			list-style: none;
-		}
-
-		summary::after {
-			content: "(dropdown)";
-			font-size: 80%;
-			color: #ffffff40;
-			display: inline;
-			padding-left: 1em;
-		}
-		th, td {
-			text-align: center;
-			background-color: #ffffff10;
-			padding: .2em .3em;
-		}
-		td {
-			background-color: #ffffff20;
-		}
-	</style>
 </head>
 
 <body>
@@ -197,7 +148,7 @@
 						<li> Shiny and matte materials </li>
 						<li> Translucent materials </li>
 						<li> Bloom </li>
-						<li> 
+						<li class="nsfw"> 
                              <details>
                              	<summary>NSFW</summary>
                              	<ul>
@@ -222,7 +173,7 @@
                         <li> Breasts </li>
                         <li> Fur </li>
                  		<li> Sweat </li>
-						<li> 
+						<li class="nsfw"> 
                              <details>
                              	<summary>NSFW</summary>
                              	<ul>
@@ -246,7 +197,7 @@
 						<li> More than two complex characters </li>
 						<li> More than four props </li>
 						<li> Background characters, except for very simple linework </li>
-						<li> 
+						<li class="nsfw"> 
                              <details>
                              	<summary>NSFW</summary>
                              	<ul>
@@ -264,10 +215,10 @@
 					<table>
 						<tr>
 							<th style="background-color: transparent"> </th>
-							<th> Sketch/Lineart </th>
+							<th> Sketch Only </th>
 							<th> Simple Characters </th>
 							<th> Half-body </th>
-							<th> Fullbody </th>
+							<th> Full-body </th>
 							<th> Coloring </th>
 							<th> Shading </th>
 							<th> Background </th>
@@ -290,8 +241,8 @@
 							<td> $20 </td>
 							<td> $20 </td>
 							<td> $30 </td>
-							<td> +$7 </td>
 							<td> +$3 </td>
+							<td> +$5 </td>
 							<td> +$3 </td>
 							<td> +$2 per </td>
 						</tr>
@@ -301,12 +252,13 @@
 							<td> $25 </td>
 							<td> $35 </td>
 							<td> $45 </td>
-							<td> +$10 </td>
 							<td> +$5 </td>
+							<td> +$10 </td>
 							<td> +$3 </td>
 							<td> +$2 per </td>
 						</tr>
 					</table>
+					<p> Just buying a commission without coloring or shading will get you only lineart. </p>
 					<p> Clothing on characters counts as a prop, but does not count towards the maximum prop limit. </p>
 					<p> Background characters are +$2 each. </p>
 					<p> My payment timeline is as follows: </p>
@@ -321,11 +273,13 @@
 						<li> I send the finished, unwatermarked piece, along with the project file </li>
 					</ol>
 					<p> Once payment is complete, you own the artwork and are free to do whatever with it, <b>except claim that I was not the creator of it, or use it to train a generative AI.</b> You must credit me for the artwork when sharing it. </p>
-					<p> Ask me before using it commercially.</p>
+					<p> Ask me before using it commercially, and tell me if you're okay with me using it for commission examples (seen below).</p>
 					<hr>
 					<p> NSFW is allowed <i>on a case-by-case basis.</i> NSFW commissions will cost you x1.35 the usual price. </p>
 					<p> <b>Never</b> mention that you are commissioning me for anything NSFW on Venmo. If you do, I risk my Venmo account being closed. </p>
 					<p> <b>If you do this, I will immediately drop your commission without refunding you.</b> </p>
+					<p> To show NSFW commission details, press this button: <button onclick="allowNSFW()">Show NSFW</button> (scroll up after) </p>
+					<p> <b>By pressing this button, you confirm you are of legal age to view NSFW content.</b> </p>
 					<hr>
 					<p> I only take Venmo, at <a href="https://account.venmo.com/u/baltdev"><code>@baltdev</code></a>. I can also be reached on Signal or Discord at the same handle. </p>
 					<hr>
@@ -356,9 +310,9 @@
 					        <img src="gallery/slat-watermarked.png">
 					    </a>
 					</div>
-					<details>
+					<details class="nsfw">
 					    <summary>NSFW</summary>
-					    <div class="image-gallery">
+					    <div class="image-gallery nsfw">
 					        <a href="gallery/nsfw/autofellatio-watermarked.png">
 					            <img src="gallery/nsfw/autofellatio-watermarked.png">
 					        </a>
