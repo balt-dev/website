@@ -55,7 +55,7 @@ var positionBuffer;
 function init() {
 
     if (!gl) {
-        alert("WebGL not initialized! Check your browser's compatibility.");
+        alert("WebGL not initialized! Check your browser's compatibility.\nDisabling background shader.");
         return;
     }
 
@@ -80,6 +80,7 @@ function init() {
 };
 init();
 function draw() {
+    if (!gl) return;
 	let dayProgress = (((Date.now()) + 43200000) % 86400000) / 86400000; // this is specifically in MY timezone
     let viewportResolutionLocation = gl.getUniformLocation(program, "resolution");
     let elapsedTimeLocation = gl.getUniformLocation(program, "time");

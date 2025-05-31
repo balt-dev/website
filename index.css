@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bytesized&display=swap');
+
 :root {
     --text: #f0e5f4;
     --background: #181619;
@@ -138,7 +140,10 @@ code {
 
 @import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Sofia+Sans+Semi+Condensed:ital,wght@0,1..1000;1,1..1000&display=swap');
 
-@font-face {
-    font-family: "Bytesized";
-    src: url("Bytesized.ttf");
+a {
+    color: #8080ff;
+}
+
+a:visited {
+    color: #c080ff;
 }

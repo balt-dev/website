@@ -9,6 +9,55 @@
 	<title>baltdev::website!()</title>
 	<link rel="stylesheet" type="text/css" href="./index.css">
 	<style id="rapidfix-styles"></style>
+	<style>
+		div.image-gallery {
+		    display: grid;
+		    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		    gap: 20px;
+		    max-width: auto;
+		    margin: 0 auto;
+		    padding: 20px;
+		}
+
+		.image-gallery a, .image-gallery img {
+		    width: 100%;
+		    height: auto;
+		    display: block;
+		    margin: auto 0;
+		    transition: transform 0.2s ease-in-out;
+		    image-rendering: pixelated;
+		}
+
+		.image-gallery img:hover {
+		    transform: scale(1.03);
+		}
+
+		li {
+			list-style-position: inside;
+			margin-left: -1em;
+		}
+
+		li:has(details) {
+			margin-left: -0.7em;
+			list-style: none;
+		}
+
+		summary::after {
+			content: "(dropdown)";
+			font-size: 80%;
+			color: #ffffff40;
+			display: inline;
+			padding-left: 1em;
+		}
+		th, td {
+			text-align: center;
+			background-color: #ffffff10;
+			padding: .2em .3em;
+		}
+		td {
+			background-color: #ffffff20;
+		}
+	</style>
 </head>
 
 <body>
@@ -27,6 +76,9 @@
 			<li class="tab">
 				<a href="#links" onclick="handleAnchor('links')">Links</a>
 			</li>
+			<li class="tab">
+				<a href="#commissions" onclick="handleAnchor('commissions')">Commissions</a>
+			</li>
 		</ul>
 	</header>
 	<main>
@@ -38,7 +90,7 @@
 						Welcome to my little corner of the internet! <br><br>
 						I'm a queer furry on the internet, and that's about all you need to know. <br>
 						I go by they/them, and I'm 19 years old. I live in the US. <br><br>
-						I program in my free time. <a href="#links" onclick="handleAnchor('links')">You can see my GitHub in the links tab</a>. <br>
+						I program and draw in my free time. <a href="#links" onclick="handleAnchor('links')">You can see my GitHub in the links tab</a>. <br>
 						I'm best with Rust and Lua, and pretty good with Python, <br>
 						but I can use just about anything given some time to learn it. <br>
 						
@@ -113,7 +165,7 @@
 				</div>
 			</div>
 			<div id="_links" class="article" hidden>
-				<header class="article-header"><h2>Links</h1></header>
+				<header class="article-header"><h2>Links</h2></header>
 				<div class="article-body">
 					<p> Here's a list of my socials: <p>
 					<ul>
@@ -124,6 +176,203 @@
 						<li><a href="https://baltdev.tumblr.com/">Tumblr</a></li>
 						<li><a href="mailto:heptor42+snomba@gmail.com">Email</a></li>
 					</ul>
+				</div>
+			</div>
+			<div id="_commissions" class="article" hidden>
+				<header class="article-header"><h2>Commissions</h2></header>
+				<div class="article-body">
+					<h1> Commissions are: CLOSED (0/1 slots full) </h1>
+					<hr>
+					<p> Commissions are on a first-come first-serve queue. I'll only take a certain number of people at a time, so if I turn you away, check back later! <p>
+					<p>	I reserve the right to reject any commission for any reason. </p>
+					<p> If it's been a while since a last update, message me. I might have forgotten. If I no longer feel able to do your commission, I'll let you know and you will get a full refund. </p>
+					<hr>
+					<p> I can do well: </p>
+					<ul>
+						<li> Quadrupedal/taur/honestly any creature-like body shape </li>
+						<li> Flat colors </li>
+						<li> Fat characters </li>
+						<li> Pixel art </li>
+						<li> Expressions on simple faces </li>
+						<li> Shiny and matte materials </li>
+						<li> Translucent materials </li>
+						<li> Bloom </li>
+						<li> 
+                             <details>
+                             	<summary>NSFW</summary>
+                             	<ul>
+                             		<li> Vore </li>
+                             		<li> Excessive cum </li>
+                             		<li> Inflation </li>
+                             		<li> Penises, of any shape or size </li>
+                             		<li> Watersports (tentatively) </li>
+                             	</ul>
+                             </details>
+						 </li>
+					</ul>
+					<p> Expect me to struggle on: </p>
+					<ul>
+						<li> Camera angles close to the floor </li>
+						<li> Humanoids, especially humans </li>
+						<li> Gradients </li>
+						<li> Clothing </li>
+						<li> Hands and feet </li>
+						<li> Dinosaurs / dragons / other complex body shapes </li>
+						<li> Gore </li>
+                        <li> Breasts </li>
+                        <li> Fur </li>
+                 		<li> Sweat </li>
+						<li> 
+                             <details>
+                             	<summary>NSFW</summary>
+                             	<ul>
+                             		<li> Vaginas </li>
+                             		<li> Internal shots </li>
+                             		<li> BDSM </li>
+                             	</ul>
+                             </details>
+						 </li>						
+					</ul>
+					<p> I do not do: </p>
+					<ul>
+						<li> High-definition artwork (400x400 pre-upscale, max!) </li>
+						<li> Work for "exposure" </li>
+						<li> Complex backgrounds </li>
+						<li> Heavy/complex gore </li>
+						<li> Animations </li>
+						<li> Comics </li>
+						<li> Individual particles of snow, rain, dust, etc. </li>
+						<li> Non-pixel art </li>
+						<li> More than two complex characters </li>
+						<li> More than four props </li>
+						<li> Background characters, except for very simple linework </li>
+						<li> 
+                             <details>
+                             	<summary>NSFW</summary>
+                             	<ul>
+                             		<li> Young-looking characters (including loli) </li>
+                             		<li> Non-con </li>
+                             		<li> Real animals (excluding dinosaurs) </li>
+                             		<li> Scat </li>
+                             		<li> Humans / human-looking characters </li>
+                             	</ul>
+                             </details>
+						</li>		
+					</ul>
+					<hr>
+					<p> Here's my price table: </p>
+					<table>
+						<tr>
+							<th style="background-color: transparent"> </th>
+							<th> Sketch/Lineart </th>
+							<th> Simple Characters </th>
+							<th> Half-body </th>
+							<th> Fullbody </th>
+							<th> Coloring </th>
+							<th> Shading </th>
+							<th> Background </th>
+							<th> Props </th>
+						</tr>
+						<tr>
+							<th> Props Only </th> 
+							<td> $5 </td>
+							<td style="background-color: #ffffff08"> </td>
+							<td style="background-color: #ffffff08"> </td>
+							<td style="background-color: #ffffff08"> </td>
+							<td> +$0 </td>
+							<td> +$1 </td>
+							<td> +$2 </td>
+							<td> +$1 per extra </td>
+						</tr>
+						<tr>
+							<th> Solo </th>
+							<td> $15 </td>
+							<td> $20 </td>
+							<td> $20 </td>
+							<td> $30 </td>
+							<td> +$7 </td>
+							<td> +$3 </td>
+							<td> +$3 </td>
+							<td> +$2 per </td>
+						</tr>
+						<tr>
+							<th> Duo </th>
+							<td> $20 </td>
+							<td> $25 </td>
+							<td> $35 </td>
+							<td> $45 </td>
+							<td> +$10 </td>
+							<td> +$5 </td>
+							<td> +$3 </td>
+							<td> +$2 per </td>
+						</tr>
+					</table>
+					<p> Clothing on characters counts as a prop, but does not count towards the maximum prop limit. </p>
+					<p> Background characters are +$2 each. </p>
+					<p> My payment timeline is as follows: </p>
+					<ol>
+						<li> You send 40% payment up front </li>
+						<li> I send a watermarked sketch </li>
+						<li> You send 20% payment (or 60% for only sketch, stopping here and sending unwatermarked sketch) </li>
+						<li> I send a watermarked unfinished version (probably flats / linework) </li>
+						<li> You give feedback </li>
+						<li> Repeat above 2 until you're happy with the artwork </li>
+						<li> You send the remaining 40% payment </li>
+						<li> I send the finished, unwatermarked piece, along with the project file </li>
+					</ol>
+					<p> Once payment is complete, you own the artwork and are free to do whatever with it, <b>except claim that I was not the creator of it, or use it to train a generative AI.</b> You must credit me for the artwork when sharing it. </p>
+					<p> Ask me before using it commercially.</p>
+					<hr>
+					<p> NSFW is allowed <i>on a case-by-case basis.</i> NSFW commissions will cost you x1.35 the usual price. </p>
+					<p> <b>Never</b> mention that you are commissioning me for anything NSFW on Venmo. If you do, I risk my Venmo account being closed. </p>
+					<p> <b>If you do this, I will immediately drop your commission without refunding you.</b> </p>
+					<hr>
+					<p> I only take Venmo, at <a href="https://account.venmo.com/u/baltdev"><code>@baltdev</code></a>. I can also be reached on Signal or Discord at the same handle. </p>
+					<hr>
+					<h2> Gallery </h2>
+					<div class="image-gallery">
+					    <a href="gallery/balt_item_4x-watermarked.png">
+					        <img src="gallery/balt_item_4x-watermarked.png">
+					    </a>
+					    <a href="gallery/creature_of_the_night-watermarked.png">
+					        <img src="gallery/creature_of_the_night-watermarked.png">
+					    </a>
+					    <a href="gallery/dubnium-watermarked.png">
+					        <img src="gallery/dubnium-watermarked.png">
+					    </a>
+					    <a href="gallery/gourmg-watermarked-watermarked.png">
+					        <img src="gallery/gourmg-watermarked-watermarked.png">
+					    </a>
+					    <a href="gallery/naga-balt-watermarked.png">
+					        <img src="gallery/naga-balt-watermarked.png">
+					    </a>
+					    <a href="gallery/normal-balt-watermarked.png">
+					        <img src="gallery/normal-balt-watermarked.png">
+					    </a>
+					    <a href="gallery/panacea-redraw-watermarked.png">
+					        <img src="gallery/panacea-redraw-watermarked.png">
+					    </a>
+					    <a href="gallery/slat-watermarked.png">
+					        <img src="gallery/slat-watermarked.png">
+					    </a>
+					</div>
+					<details>
+					    <summary>NSFW</summary>
+					    <div class="image-gallery">
+					        <a href="gallery/nsfw/autofellatio-watermarked.png">
+					            <img src="gallery/nsfw/autofellatio-watermarked.png">
+					        </a>
+					        <a href="gallery/nsfw/balt-pseudocomm-cum-watermarked.png">
+					            <img src="gallery/nsfw/balt-pseudocomm-cum-watermarked.png">
+					        </a>
+					        <a href="gallery/nsfw/foof-watermarked.png">
+					            <img src="gallery/nsfw/foof-watermarked.png">
+					        </a>
+					        <a href="gallery/nsfw/jiji-redraw-watermarked.png">
+					            <img src="gallery/nsfw/jiji-redraw-watermarked.png">
+					        </a>
+					    </div>
+					</details>
 				</div>
 			</div>
 			<div id="_its_a_secret_to_nobody" class="article" hidden>
