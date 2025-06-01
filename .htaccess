@@ -2,4 +2,4 @@ RedirectMatch 301 ^/chill/invite https://discord.com/api/oauth2/authorize?client
 RedirectMatch 301 ^/chill/server https://discord.gg/ktk8XkAfGD
 RedirectMatch 301 ^/chill/github https://github.com/balt-dev/robot-is-chill
 RedirectMatch 301 ^/dfpaint https://dfpaint-server.heptor.repl.co/
-ErrorDocument 404 /404.html
+ErrorDocument 404 404.html

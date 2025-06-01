@@ -219,3 +219,24 @@ th, td {
 td {
     background-color: #ffffff20;
 }
+
+
+
+@media (max-aspect-ratio: 1.4/1) or (max-height: 720px) or (max-width: 1080px) {
+    body {
+        font-size: 70%;
+    }
+    main {
+        width: 80%;
+    }
+    article {
+        padding: 10pt;
+    }
+    ul.tabs > li.tab {
+        height: 20pt;
+        line-height: 20pt;
+    }
+    header.main {
+        height: 100pt;
+    }
+}
