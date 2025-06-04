@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>baltdev::website!(404)</title>
+	<style type="text/css">
+		@import url('https://fonts.googleapis.com/css2?family=Bytesized&display=swap');
+
+		body {
+			background-color: black;
+			color: white;
+			font-family: "Bytesized", monospace;
+		}
+
+		main {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100vw;
+			height: 100vh;
+			display: flex;
+		}
+
+		main div {
+			border: 1px solid #6a5acd;
+			width: max(50em, 80%);
+			height: max(30em, 60%);
+			text-align: center;
+			margin: auto auto;
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			background-color: #6a5acd30;
+		}
+		div * {
+			border: 1px solid #6a5acd;
+			background-color: black;
+			width: min(80em, 60%);
+			margin: auto;
+		}
+		a {
+			transition: transform 0.075s ease-out;
+		}
+		a:hover {
+			transform: scale(103%);
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<div>
+			<h1 style="font-size: 1600%; font-weight: unset;">404</h1>
+			<a href="/" style="font-size: 300%; font-weight: unset; color: white; text-decoration-line: none">...go home?</a>
+		</div>
+	</main>
+</body>
+</html>
