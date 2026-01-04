@@ -240,3 +240,12 @@ td {
         height: 100pt;
     }
 }
+
+input {
+    background-color: #00000020;
+    color: #ffffff;
+    border: 0px;
+    border-radius: 3px;
+    width: 4em;
+    font-size: inherit;
+}

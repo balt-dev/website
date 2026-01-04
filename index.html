@@ -153,7 +153,10 @@
                              <details>
                              	<summary>NSFW</summary>
                              	<ul>
-                             		<li> Vore </li>
+                             		<li> Oral vore, anal vore, and cock vore </li>
+									<ul>
+										<li> Fully vored characters without an internal shot count as props for the purpose of pricing </li>
+									</ul>
                              		<li> Excessive cum (including cum ballooning) </li>
                              		<li> Inflation </li>
                              		<li> Penises, of any shape or size </li>
@@ -196,7 +199,7 @@
 						<li> Non-pixel art </li>
 						<li> More than two complex characters </li>
 						<li> More than four props </li>
-						<li> Background characters, except for very simple linework </li>
+						<li> Background characters, except for simple linework </li>
 						<li class="nsfw"> 
                              <details>
                              	<summary>NSFW</summary>
@@ -237,10 +240,10 @@
 						</tr>
 						<tr>
 							<th> With Characters </th>
-							<td> $10, +$5 per extra </td>
-							<td> $15, +$5 per extra </td>
-							<td> $15, +$5 per extra </td>
-							<td> $20, +$10 per extra </td>
+							<td> $12, +$5 per extra </td>
+							<td> $17, +$5 per extra </td>
+							<td> $12, +$5 per extra </td>
+							<td> $25, +$10 per extra </td>
 							<td> +$3 per </td>
 							<td> +$5 per </td>
 							<td> +$5 </td>
@@ -249,32 +252,72 @@
 					</table>
 					<p> Just buying a commission without coloring or shading will get you only lineart. </p>
 					<p> Background characters are +$2 each. </p>
-					<p> My payment timeline is as follows: </p>
-					<details>
-						<summary>Timeline</summary>
-						<ol>
-							<li> You send 40% payment up front </li>
-							<li> I send a watermarked sketch </li>
-							<li> You send 20% payment (or 60% for only sketch, stopping here and sending unwatermarked sketch) </li>
-							<li> I send a watermarked unfinished version (probably flats / linework) </li>
-							<li> You give feedback </li>
-							<li> Repeat above 2 until you're happy with the artwork </li>
-							<li> You send the remaining 40% payment </li>
-							<li> I send the finished, unwatermarked piece, along with the project file </li>
-						</ol>
-					</details>
-					<p> Alternatively, you can just pay me fully up front, or do half and half, if you trust me enough to. Entirely up to you as long as I get at least 40% up front. </p>
+					<p> My payment timeline is mostly up to you, as long as I get at least 35% up front. </p>
+					<p> I may cancel a commission at any time, for any reason. If this is to happen, you will get a full refund of the money paid so far, except for if you break the rule outlined below. </p>
 					<hr>
 					<p> Once payment is complete, you're free to do whatever with the artwork, <b>except claim that I was not the creator of it, or use it to train a generative AI.</b> You must credit me for the artwork when sharing it. </p>
 					<p> Ask me before using it commercially, and tell me if you're okay with me using it for commission examples (seen below).</p>
 					<hr>
-					<p> NSFW is allowed <i>on a case-by-case basis.</i> NSFW commissions will cost you x1.2 the usual price. </p>
-					<p> <b>Never</b> mention that you are commissioning me for anything NSFW on Venmo. If you do, I risk my Venmo account being closed. </p>
+					<p> NSFW is allowed <i>on a case-by-case basis.</i> NSFW commissions will cost you x1.35 the usual price, rounded down to the nearest dollar. </p>
+					<p> <b>Never</b> mention that you are commissioning me for anything NSFW on Venmo or Ko-fi. If you do, I risk my account being closed. </p>
 					<p> <b>If you do this, I will immediately drop your commission without refunding you.</b> </p>
 					<p> To show NSFW commission details, press this button: <button onclick="allowNSFW()">Show NSFW</button> (scroll up after) </p>
 					<p> <b>By pressing this button, you confirm you are of legal age to view NSFW content.</b> </p>
 					<hr>
-					<p> I only take Venmo, at <a href="https://account.venmo.com/u/baltdev"><code>@baltdev</code></a>. I can also be reached on Signal or Discord at the same handle. </p>
+					<p> For your convenience, I've created a commission price calculator. Use it to check how expensive your commission may be. </p>
+					<details>
+						<summary>Price Calculator</summary>
+						<blockquote>
+							<table>
+								<tr>
+									<td>Sketch Characters</td>
+									<td><input type="number" min="0" max="4" step="1" value="0" id="num-characters-sketch" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Simple Characters</td>
+									<td><input type="number" min="0" max="4" step="1" value="0" id="num-characters-simple" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Half-body Characters</td>
+									<td><input type="number" min="0" max="4" step="1" value="0" id="num-characters-half" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Full-body Characters</td>
+									<td><input type="number" min="0" max="4" step="1" value="0" id="num-characters-full" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Props</td>
+									<td><input type="number" min="0" max="16" step="1" value="0" id="num-characters-props" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Background Characters</td>
+									<td><input type="number" min="0" max="4" step="1" value="0" id="num-characters-bg" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Shading?</td>
+									<td><input type="checkbox" id="calc-shading" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Coloring?</td>
+									<td><input type="checkbox" id="calc-coloring" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>Background?</td>
+									<td><input type="checkbox" id="calc-background" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td>NSFW?</td>
+									<td><input type="checkbox" id="calc-nsfw" oninput="updatePrice()"></td>
+								</tr>
+								<tr>
+									<td><b>Final Price</b></td>
+									<td><input type="text" id="calc-finalprice" readonly></td>
+								</tr>
+							</table>
+						</blockquote>
+					</details>
+					<hr>
+					<p> I take <a href="https://account.venmo.com/u/baltdev">Venmo</a> and <a href="https://ko-fi.com/baltdev">Ko-fi</a>. I can also be reached on Signal or Discord at the same handle. </p>
 					<hr>
 					<h2> Gallery </h2>
 					<div class="image-gallery">
@@ -309,10 +352,6 @@
 					        <img src="gallery/raz_fat-watermarked.png">
 					    </a>
 					</div>
-					<details class="nsfw" open>
-					    <summary>NSFW</summary>
-					    <p> This section has been removed. DM me if you wish to see its contents. </p>
-					</details>
 				</div>
 			</div>
 			<div id="_its_a_secret_to_nobody" class="article" hidden>
