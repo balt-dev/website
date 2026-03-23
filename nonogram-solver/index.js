@@ -18,7 +18,7 @@ if (textarea.checkValidity()) {
             const pattern = new RegExp(`^(?:${e.target.getAttribute('pattern')})$`);
             e.target.setCustomValidity(pattern.test(e.target.value)
                 ? ''
-                : "Please input a comma-separated list of space-separated column hints.\nFor an empty column, input a single 0.");
+                : "Please input a line-separated list of comma-separated hints.\nFor an empty row/column, input a single 0.");
         }
     });
 }
@@ -145,12 +145,12 @@ if (textarea.checkValidity()) {
         const rawRows = (_a = formData.get("rows")) === null || _a === void 0 ? void 0 : _a.toString();
         const rawColumns = (_b = formData.get("columns")) === null || _b === void 0 ? void 0 : _b.toString();
         // Parse the rows and columns into lists of lists of numbers
-        let parsedRows = rawRows === null || rawRows === void 0 ? void 0 : rawRows.split(",").map((s) => s.split(" ")
+        let parsedRows = rawRows === null || rawRows === void 0 ? void 0 : rawRows.split("\n").map((s) => s.split(",")
             .filter((s) => s.length !== 0)
-            .map((n) => +n));
-        let parsedColumns = rawColumns === null || rawColumns === void 0 ? void 0 : rawColumns.split(",").map((s) => s.split(" ")
+            .map((n) => +(n.trim())));
+        let parsedColumns = rawColumns === null || rawColumns === void 0 ? void 0 : rawColumns.split("\n").map((s) => s.split(",")
             .filter((s) => s.length !== 0)
-            .map((n) => +n));
+            .map((n) => +(n.trim())));
         let width = parsedColumns.length;
         let height = parsedRows.length;
         let hintWidth = Math.max(...parsedRows.map((l) => l.length - 1 + l.reduce((a, b) => a + b, 0)));

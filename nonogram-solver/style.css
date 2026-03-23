@@ -86,6 +86,7 @@ input, textarea {
 
 textarea {
     width: min(70%, 25em);
+    height: 12em;
     resize: vertical;
 }
 
