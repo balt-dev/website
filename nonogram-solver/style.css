@@ -1,0 +1,165 @@
+:root {
+    --bg-color: #edd;
+    --fg-color: #fee;
+    --text-color: #222;
+    --button-color: #ccc;
+    --button-color-highlight: #eee;
+    --button-color-click: #888;
+    --separator: #888;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+	    --bg-color: #111;
+	    --fg-color: #334;
+		--text-color: #ffe;
+		--button-color: #556;
+        --button-color-highlight: #778;
+        --button-color-click: #445;
+        --separator: #445;
+	}
+}
+
+* {
+    color: var(--text-color);
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0px;
+    padding: 0px;
+    background-color: var(--bg-color);
+}
+@keyframes bgAnimate {
+  from {transform: scale(200%) rotate(10deg);}
+  to {transform: scale(200%) rotate(10deg) translateX(16pt);}
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-size: 16pt;
+    image-rendering: pixelated;
+    background-image: url("./background.png");
+    transform: scale(200%) rotate(10deg);
+    animation-name: bgAnimate;
+    animation-timing-function: linear;
+    animation-duration: 4.3s;
+    animation-direction: normal;
+    animation-iteration-count: infinite;
+}
+div.main {
+    border: 3pt solid var(--text-color);
+    background-color: var(--fg-color);
+    margin: auto;
+    margin-top: 3em;
+    width: max(600px, 60%);
+    border-radius: 0.1em;
+    text-align: center;
+}
+h1 {
+    text-align: center;
+}
+
+div.input {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    padding: 0.5em;
+    width: max(400px, 90%);
+    margin: auto
+}
+
+input, textarea {
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 0.1em;
+}
+
+textarea {
+    width: min(70%, 25em);
+    resize: vertical;
+}
+
+input.go-button {
+    margin: auto;
+    width: max(60%, 500px);
+}
+input.go-button:hover {
+    cursor: pointer;
+    background-color: var(--button-color-highlight);
+}
+input.go-button:active {
+    cursor: pointer;
+    background-color: var(--button-color-click);
+}
+
+div.grid-div {
+    width: max(50%, 400px);
+    margin: auto;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+table#grid {
+    font-family: monospace;
+    background-color: var(--bg-color);
+    border: 1pt solid var(--text-color);
+    border-spacing: 0px;
+}
+
+table#grid tr {
+    min-height: 1.3em;
+    height: 1.3em;
+    max-height: 1.3em;
+    margin: 0px; padding: 0px;
+}
+table#grid tr td {
+    min-width: 1.3em;
+    width: 1.3em;
+    max-width: 1.3em;
+    text-align: center;
+    margin: 0px; padding: 0px;
+}
+
+.filledCell {
+    background-color: var(--text-color);
+}
+
+.crossedCell::before {
+    content: "X";
+}
+
+table#grid td + td {
+    border-left: 1pt solid var(--button-color-click);
+}
+table#grid > tr + tr > td {
+    border-top: 1pt solid var(--button-color-click);
+}
+
+table#grid td.cell-leftBorder {
+    border-left-width: 2pt;
+}
+table#grid td.cell-topBorder {
+    border-top-width: 2pt;
+}
+
+p.attribution {
+    opacity: 80%;
+    display: block;
+    width: 100%;
+    margin: 2em auto;
+    font-size: 80%;
+    font-style: italic;
+}
