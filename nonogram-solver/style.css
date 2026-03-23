@@ -164,3 +164,20 @@ p.attribution {
     font-size: 80%;
     font-style: italic;
 }
+
+.highlightedCell {
+    position: relative;
+}
+
+.highlightedCell::after {
+    border: 3px solid var(--text-color);
+    box-sizing: border-box;
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 40%;
+}

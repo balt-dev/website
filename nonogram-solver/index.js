@@ -67,6 +67,8 @@ if (textarea.checkValidity()) {
     }
     let lock = false;
     let columnScratch;
+    let activeIndex = 0;
+    let activeKind = "X";
     function updateBoardVisual() {
         for (let y = 0; y < board.length; y++) {
             for (let x = 0; x < board[0].length; x++) {
@@ -80,6 +82,8 @@ if (textarea.checkValidity()) {
                 }
             }
         }
+        document.querySelectorAll(".highlightedCell").forEach((el) => el.classList.remove("highlightedCell"));
+        document.querySelectorAll(`.${activeKind}${activeIndex}`).forEach((el) => el.classList.add("highlightedCell"));
     }
     const waitFrame = () => new Promise((resolve, _) => {
         updateBoardVisual();
@@ -89,25 +93,31 @@ if (textarea.checkValidity()) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let changed = false;
+                activeKind = "Y";
                 for (let y = 0; y < columnScratch.length; y++) {
+                    activeIndex = y;
                     let hints = rowHints[y];
                     let row = board[y];
                     let oldRow = [...row];
                     intersectRunLengths(hints, row);
-                    yield waitFrame();
-                    if (!oldRow.every((old, index) => row[index] === old))
+                    if (!oldRow.every((old, index) => row[index] === old)) {
                         changed = true;
+                        yield waitFrame();
+                    }
                 }
+                activeKind = "X";
                 for (let x = 0; x < columnHints.length; x++) {
+                    activeIndex = x;
                     let hints = columnHints[x];
                     for (let y = 0; y < columnScratch.length; y++) {
                         columnScratch[y] = board[y][x];
                     }
                     let oldColumn = [...columnScratch];
                     intersectRunLengths(hints, columnScratch);
-                    yield waitFrame();
-                    if (!oldColumn.every((old, index) => columnScratch[index] === old))
+                    if (!oldColumn.every((old, index) => columnScratch[index] === old)) {
                         changed = true;
+                        yield waitFrame();
+                    }
                     for (let y = 0; y < columnScratch.length; y++) {
                         board[y][x] = columnScratch[y];
                     }
@@ -118,6 +128,7 @@ if (textarea.checkValidity()) {
                     return;
                 }
                 if (board.every((row) => row.every((cell) => cell !== undefined))) {
+                    updateBoardVisual();
                     requestAnimationFrame(() => alert("Board solved!"));
                     lock = false;
                     return;
