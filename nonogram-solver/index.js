@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { intersectRunLengths } from "./slop.js";
+import { checkRowOrColumn } from "./slop.js";
 const invalid = { pattern: 'a', value: 'b' };
 const textarea = Object.assign(document.createElement('textarea'), invalid);
 if (textarea.checkValidity()) {
@@ -35,7 +35,7 @@ if (textarea.checkValidity()) {
         let width = columnHints.length;
         let height = rowHints.length;
         for (let y = 0; y < height; y++) {
-            board[y] = new Array(width);
+            board[y] = new Array(width).fill(undefined);
         }
         let newChildren = [];
         for (let y = -columnHintSize; y < height; y++) {
@@ -66,7 +66,6 @@ if (textarea.checkValidity()) {
         gridNode.replaceChildren(...newChildren);
     }
     let lock = false;
-    let columnScratch;
     let activeIndex = 0;
     let activeKind = "X";
     function updateBoardVisual() {
@@ -86,7 +85,6 @@ if (textarea.checkValidity()) {
         document.querySelectorAll(`.${activeKind}${activeIndex}`).forEach((el) => el.classList.add("highlightedCell"));
     }
     const waitFrame = () => new Promise((resolve, _) => {
-        updateBoardVisual();
         requestAnimationFrame(resolve);
     });
     function gridStep() {
@@ -94,32 +92,23 @@ if (textarea.checkValidity()) {
             try {
                 let changed = false;
                 activeKind = "Y";
-                for (let y = 0; y < columnScratch.length; y++) {
+                for (let y = 0; y < board.length; y++) {
                     activeIndex = y;
                     let hints = rowHints[y];
-                    let row = board[y];
-                    let oldRow = [...row];
-                    intersectRunLengths(hints, row);
-                    if (!oldRow.every((old, index) => row[index] === old)) {
+                    if (checkRowOrColumn(hints, board[0].length, (index) => board[y][index], (index, value) => board[y][index] = value)) {
                         changed = true;
+                        updateBoardVisual();
                         yield waitFrame();
                     }
                 }
                 activeKind = "X";
-                for (let x = 0; x < columnHints.length; x++) {
+                for (let x = 0; x < board[0].length; x++) {
                     activeIndex = x;
                     let hints = columnHints[x];
-                    for (let y = 0; y < columnScratch.length; y++) {
-                        columnScratch[y] = board[y][x];
-                    }
-                    let oldColumn = [...columnScratch];
-                    intersectRunLengths(hints, columnScratch);
-                    if (!oldColumn.every((old, index) => columnScratch[index] === old)) {
+                    if (checkRowOrColumn(hints, board.length, (index) => board[index][x], (index, value) => board[index][x] = value)) {
                         changed = true;
+                        updateBoardVisual();
                         yield waitFrame();
-                    }
-                    for (let y = 0; y < columnScratch.length; y++) {
-                        board[y][x] = columnScratch[y];
                     }
                 }
                 if (!changed) {
@@ -146,7 +135,6 @@ if (textarea.checkValidity()) {
         if (lock)
             return;
         lock = true;
-        columnScratch = new Array(rowHints.length);
         requestAnimationFrame(gridStep);
     }
     formNode.addEventListener("submit", (e) => {
