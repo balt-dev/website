@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>midiSays</title>
+        <style>
+            :root {
+                --bg-color: #aaa;
+                --main-color: #fff;
+                --text-color: #222;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg-color: #111;
+                    --main-color: #333;
+                    --text-color: #fff;
+                }
+            }
+
+            * {
+                color: var(--text-color);
+            }
+
+            body {
+                background-color: var(--bg-color);
+            }
+
+            main {
+                text-align: center;
+                width: 70%;
+                margin: auto;
+                background-color: var(--main-color);
+                padding: 1em;
+            }
+
+            hr {
+                width: 90%;
+            }
+
+            canvas#piano {
+                width: min(80%, 30em);
+                aspect-ratio: 2 / 1;
+            }
+
+            .line {
+                white-space: pre-line;
+            }
+
+            button {
+                border: 2px solid var(--text-color);
+                color: var(--text-color);
+                background-color: var(--main-color);
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            body:has(dialog[open]) {
+                filter: blur(7px);
+            }
+
+            dialog {
+                color: var(--text-color);
+                background-color: var(--main-color);
+                border: 2px solid var(--text-color);
+            }
+        </style>
+    </head>
+    <body>
+        <dialog id="modal" style="text-align: center">
+            <p id="modal_message"></p>
+            <button onclick="modal.close()">Close</button>
+        </dialog>
+        <main>
+            <h1>midiSays</h1>
+            <h3><i>A game for training your pitch-matching skills</i></h3>
+            <hr />
+            <canvas id="piano">
+                HTML canvas displaying a MIDI piano. If you're seeing this, your
+                browser doesn't support the canvas element.
+            </canvas>
+            <br />
+            <button
+                id="startButton"
+                style="padding: 0.5em 2em; font-size: 125%"
+            >
+                Start
+            </button><br>
+            <input type="checkbox" id="restart">
+            <label for="restart">Automatically restart?</label><br>
+            <p class="line"><span
+                id="scoreLabel">Score: 0</span>
+                <span id="highscoreLabel">High Score: 0</span
+            ></p>
+            <hr />
+            <p class="line"><i
+                >A MIDI device is required to play this game.</i>
+                <i>Repeat each note you hear. Keys are only registered on release.</i
+            ></p>
+            <hr />
+            <p class="line">
+                <i>This page uses a single cookie to store your high score.</i>
+                <i>No generative AI was used in the creation of this page.</i>
+                <i>&copy; <a href="https://github.com/balt-dev">baltdev</a> 2026. Released under the <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA 4.0</a> license.</i>
+            </p>
+            <script>
+                function showModal(msg) {
+                    modal_message.textContent = msg;
+                    modal.showModal();
+                }
+
+                let inGame = false;
+                let midi = null;
+                let keysDown = new Set();
+                let pianoEnabled = false;
+                let highlightedNote = null;
+
+                function onMIDISuccess(midiAccess) {
+                    modal.close();
+                    midi = midiAccess;
+                    midi.inputs.forEach((entry) => {
+                        entry.onmidimessage = onMIDIMessage;
+                    });
+                }
+
+                function toHertz(midi) {
+                    return 440 * Math.pow(2, (midi - 69) / 12);
+                }
+
+                let audio;
+
+                function initAudio() {
+                    if (audio == null) enablePiano();
+                    audio ??= new AudioContext();
+                    if (audio.state === "suspended") audio.resume();
+                }
+
+                function playNote(note, length = 600) {
+                    if (!audio) {
+                        console.warn(
+                            "Tried to play note before AudioContext was initialized",
+                        );
+                        return;
+                    }
+                    const osc = audio.createOscillator();
+                    osc.frequency.value = toHertz(note);
+                    osc.connect(audio.destination);
+                    osc.type = "square";
+                    osc.start();
+                    setTimeout(() => osc.stop(), length);
+                }
+
+                const oscillators = {};
+
+                function startNote(note, volume = 127) {
+                    if (!audio) {
+                        console.warn(
+                            "Tried to play note before AudioContext was initialized",
+                        );
+                        return;
+                    }
+                    if (oscillators[note]) {
+                        oscillators[note].osc.stop();
+                        delete oscillators[note];
+                    }
+                    const osc = audio.createOscillator();
+                    const gain = audio.createGain();
+                    oscillators[note] = { osc: osc, gain: gain };
+                    osc.frequency.value = toHertz(note);
+
+                    osc.connect(gain);
+                    gain.connect(audio.destination);
+
+                    gain.gain.value = volume / 127;
+                    osc.type = "square";
+                    osc.start();
+                }
+
+                function stopNote(note) {
+                    let osc = oscillators[note];
+                    if (!osc) {
+                        console.warn("Tried to stop note that doesn't exist");
+                        return;
+                    }
+
+                    osc.osc.stop();
+                    delete oscillators[note];
+
+                    if (expectedNote != null) {
+                        if (note == expectedNote) nextRound();
+                        else endGame();
+                    }
+                }
+
+                function onMIDIFailure(msg) {
+                    showModal(
+                        "MIDI device access was not allowed. This webapp won't function without it.\n" +
+                            "Please allow MIDI device access in your browser's settings.\n" +
+                            `(${msg})`,
+                    );
+                }
+
+                navigator
+                    .requestMIDIAccess()
+                    .then(onMIDISuccess, onMIDIFailure);
+
+                showModal(
+                    "This webapp requires MIDI device access to function.\n" +
+                        "Please allow it in your browser now.",
+                );
+
+                let borderColor = "#000000";
+
+                const ctx = piano.getContext("2d");
+                function redrawCanvas() {
+                    console.log("Redrawing canvas...");
+                    let width = piano.width;
+                    let height = piano.height;
+
+                    ctx.lineWidth = piano.height / 50;
+
+                    // White keys
+                    let keyWidth = width / 8;
+
+                    const keyMap = [60, 62, 64, 65, 67, 69, 71, 72];
+                    for (let i = 0; i < 8; i++) {
+                        ctx.strokeStyle = "#909090";
+                        if (highlightedNote == keyMap[i]) ctx.fillStyle = "#7070FF";
+                        else if (keysDown.has(keyMap[i]) || !pianoEnabled) ctx.fillStyle = "#d0d0d0";
+                        else ctx.fillStyle = "#FFFFFF";
+                        ctx.fillRect(i * keyWidth, 0, keyWidth, height);
+                        ctx.strokeRect(i * keyWidth, 0, keyWidth, height);
+                    }
+
+                    function drawBlackKey(offset, key) {
+                        ctx.fillStyle = "#404040";
+                        ctx.strokeStyle = "#101010";
+
+                        let xOffset = offset * keyWidth;
+                        if (keysDown.has(key) || !pianoEnabled)
+                            ctx.fillStyle = "#303030";
+                        if (highlightedNote == key)
+                          ctx.fillStyle = "#303080";
+                        ctx.fillRect(xOffset + (2 / 3) * keyWidth, 0, (keyWidth * 2) / 3, (2 * height) / 3);
+                        ctx.strokeRect(xOffset + (2 / 3) * keyWidth, 0, (keyWidth * 2) / 3, (2 * height) / 3);
+                    }
+
+                    // Black keys
+                    drawBlackKey(0, 49 + 12);
+                    drawBlackKey(1, 51 + 12);
+                    drawBlackKey(3, 54 + 12);
+                    drawBlackKey(4, 56 + 12);
+                    drawBlackKey(5, 58 + 12);
+
+                    ctx.strokeStyle = borderColor;
+                    ctx.strokeRect(ctx.lineWidth / 2, ctx.lineWidth / 2, width - ctx.lineWidth, height - ctx.lineWidth);
+                }
+
+                function resizeCanvas() {
+                    piano.width = piano.clientWidth;
+                    piano.height = piano.clientHeight;
+                    redrawCanvas();
+                }
+
+                window.addEventListener("resize", resizeCanvas, false);
+                resizeCanvas();
+
+                function keyDown(key, volume) {
+                    if (pianoEnabled) {
+                        startNote(key, volume);
+                    }
+                    keysDown.add(key);
+                    redrawCanvas();
+                }
+                function keyUp(key, volume) {
+                    stopNote(key);
+                    keysDown.delete(key);
+                    redrawCanvas();
+                }
+
+                function onMIDIMessage(event) {
+                    let str = `MIDI message received at timestamp ${event.timeStamp}[${event.data.length} bytes]: `;
+                    for (const character of event.data) {
+                        str += `0x${character.toString(16)} `;
+                    }
+                    console.log(str);
+
+                    if (event.data.length != 3) return;
+                    let key = event.data[1];
+                    let volume = event.data[2];
+
+                    if (event.data[0] == 0x80) keyUp(key, volume);
+                    else if (event.data[0] == 0x90) keyDown(key, volume);
+                    else return;
+
+                    console.log(
+                        `Keys down: {${Array.from(keysDown).join(", ")}}`,
+                    );
+                }
+
+                window.onerror = function (
+                    message,
+                    source,
+                    lineno,
+                    colno,
+                    error,
+                ) {
+                    showModal(
+                        "Uncaught exception detected. Please refresh the page.\n" +
+                            `At ${source} ${lineno}:${colno}:\n` +
+                            `${message}`,
+                    );
+                };
+
+                document.addEventListener("click", initAudio, { once: true });
+
+                function enablePiano() {
+                    pianoEnabled = true;
+                    redrawCanvas();
+                }
+
+                function disablePiano() {
+                    pianoEnabled = false;
+                    Object.entries(oscillators).forEach((osc, note, map) => {
+                        try {
+                          osc.osc.stop();
+                          delete oscillators[osc];
+                        } catch (e) {
+                          console.warn(`what? ${e}`)
+                        }
+                    });
+                    redrawCanvas();
+                }
+
+                let expectedNote = [];
+
+                function addExpectedNote() {
+                    expectedNote = Math.floor(Math.random() * (73 - 48) + 48);
+                }
+
+                function playExpectedNote() {
+                  playNote(expectedNote);
+                  setTimeout(enablePiano, 1000);
+                }
+
+                let score;
+                setScore(0);
+
+                function getHighScore() {
+                    if (document.cookie == "") {
+                        document.cookie = "highscore=0";
+                        return 0;
+                    }
+                    const [name, value] = document.cookie.split("=");
+                    if (name != "highscore") {
+                        console.warn("malformed cookie?");
+                    }
+                    return +value;
+                }
+
+                function setHighScore(score) {
+                    document.cookie = `highscore=${score}`;
+                }
+
+                function setScore(newScore) {
+                    score = newScore;
+                    let oldHighScore = getHighScore();
+                    let highScore = Math.max(oldHighScore, score);
+                    setHighScore(highScore);
+                    scoreLabel.textContent = `Score: ${score}`;
+                    highscoreLabel.textContent = `High Score: ${highScore}`;
+                }
+
+                function startGame() {
+                  inGame = true;
+                  setScore(0);
+                  initAudio();
+                  expectedNote = null
+                  disablePiano();
+
+                  addExpectedNote();
+                  playExpectedNote();
+                }
+
+                startButton.addEventListener("click", () => startGame());
+
+                function nextRound() {
+                    console.log("Next round!");
+                    setScore(score + 1);
+
+                    borderColor = "#009000";
+                    redrawCanvas();
+                    setTimeout(() => playNote(60, 150), 100);
+                    setTimeout(() => playNote(67, 100), 200);
+                    setTimeout(() => {
+                        borderColor = "$000000";
+                        redrawCanvas();
+                    }, 500);
+
+                    setTimeout(() => {
+                        addExpectedNote();
+                        playExpectedNote();
+                    }, 1000);
+                }
+
+                function endGame() {
+                    highlightedNote = expectedNote;
+                    expectedNote = null;
+                    console.log("Game over...");
+                    borderColor = "#900000";
+                    redrawCanvas();
+                    setTimeout(() => playNote(48, 50), 100);
+                    setTimeout(() => playNote(48, 200), 200);
+                    setTimeout(() => {
+                        borderColor = "$000000";
+                        highlightedNote = null;
+                        redrawCanvas();
+                    }, 500);
+                    if (restart.checked) {
+                      setTimeout(() => startGame(), 1000);
+                    }
+                }
+            </script>
+        </main>
+    </body>
+</html>
